@@ -43,7 +43,8 @@
     .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
     .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); }
     #resultArea { width: 100%; flex-grow: 1; background: #000; color: #0f0; border: none; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; }
-    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:9999; color:white; }
+    /* ローディング（通信中）のスタイル */
+    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
   </style>
 </head>
 <body>
@@ -116,15 +117,16 @@
 
   <script>
     // 【重要】ここにコピーしたGASのウェブアプリURLを貼り付けてください
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzSV8jokY9LLVLn3ylFoHOHbE7qOZ-zgie0f9S-fTczyd_LQKBLs68FlA8DFLf3gai-rQ/exec";
+    const GAS_URL = "ここにメモしたURLを貼る";
 
     let IS_ADMIN = false;
     const ADMIN_PASS = "0000"; 
     let startTime = null, isRunning = false, allSongs = [], currentRequests = [], currentTab = "すべて";
     const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元貴"];
 
-    async function callGAS(params) {
-      document.getElementById('loadingOverlay').style.display = 'flex';
+    // 改良版通信関数：showLoadingがtrueの時だけ画面をロックする
+    async function callGAS(params, showLoading = false) {
+      if (showLoading) document.getElementById('loadingOverlay').style.display = 'flex';
       const queryString = new URLSearchParams(params).toString();
       try {
         const response = await fetch(`${GAS_URL}?${queryString}`);
@@ -132,9 +134,9 @@
         return data;
       } catch (e) {
         console.error(e);
-        alert("通信エラーが発生しました");
+        if (showLoading) alert("通信エラーが発生しました");
       } finally {
-        document.getElementById('loadingOverlay').style.display = 'none';
+        if (showLoading) document.getElementById('loadingOverlay').style.display = 'none';
       }
     }
 
@@ -143,11 +145,11 @@
       applyAdminMode(loggedIn);
       const cached = localStorage.getItem('songCache');
       if (cached) { allSongs = JSON.parse(cached); renderAll(); }
-      fetchData();
+      fetchData(true); // 初回は表示する
     };
 
-    async function fetchData() {
-      const songs = await callGAS({ action: "getSongs" });
+    async function fetchData(showUI = false) {
+      const songs = await callGAS({ action: "getSongs" }, showUI);
       if (songs) {
         allSongs = songs;
         localStorage.setItem('songCache', JSON.stringify(songs));
@@ -210,20 +212,21 @@
         document.getElementById('execSingBtn').onclick = async () => {
           if (!isRunning) return alert("STARTを押してください");
           executeSing(song);
-          if (isFromRequest && requestId) await callGAS({ action: "deleteRequest", id: requestId });
+          if (isFromRequest && requestId) callGAS({ action: "deleteRequest", id: requestId }, false);
           closeConfirm();
           if (isFromRequest) closeRequestModal();
         };
       } else {
         if (confirm(`「${song.name}」をリクエストしますか？`)) {
-          callGAS({ action: "sendRequest", name: song.name, artist: song.artist }).then(() => alert("送信完了！"));
+          callGAS({ action: "sendRequest", name: song.name, artist: song.artist }, true).then(() => alert("リクエストを送信しました！"));
         }
       }
     }
 
     async function checkRequests() {
       if (!IS_ADMIN) return;
-      const reqs = await callGAS({ action: "getRequests" });
+      // 裏でこっそり確認（false）
+      const reqs = await callGAS({ action: "getRequests" }, false);
       if (reqs) {
         currentRequests = reqs;
         const badge = document.getElementById('requestBadge');
@@ -236,7 +239,7 @@
       const modal = document.getElementById('requestModal');
       const list = document.getElementById('requestList');
       modal.style.display = 'flex';
-      list.innerHTML = currentRequests.length === 0 ? '<div style="text-align:center; padding:20px; color:#666;">なし</div>' : '';
+      list.innerHTML = currentRequests.length === 0 ? '<div style="text-align:center; padding:20px; color:#666;">リクエストはありません</div>' : '';
       currentRequests.forEach(req => {
         const div = document.createElement('div');
         div.className = 'request-item';
@@ -247,8 +250,8 @@
     }
 
     async function deleteReq(id) {
-      if (confirm("消しますか？")) {
-        await callGAS({ action: "deleteRequest", id: id });
+      if (confirm("このリクエストを削除しますか？")) {
+        await callGAS({ action: "deleteRequest", id: id }, true);
         checkRequests();
         openRequestModal();
       }
@@ -257,17 +260,20 @@
     async function executeSing(song) {
       const timeStr = document.getElementById('timerDisplay').innerText;
       document.getElementById('resultArea').value += `${timeStr} ${song.name}\n`;
-      if (song.id) await callGAS({ action: "updateDate", id: song.id });
+      // 日付更新は裏で実行（false）
+      if (song.id) callGAS({ action: "updateDate", id: song.id }, false);
     }
 
     async function addNewSong() {
       const name = document.getElementById('newSong').value;
       const artist = document.getElementById('newArtist').value;
       const status = document.getElementById('newStatus').value;
-      if (!name || !artist) return alert("入力してください");
-      await callGAS({ action: "addSong", name, artist, status });
-      alert("追加しました");
-      fetchData();
+      if (!name || !artist) return alert("曲名とアーティストを入力してください");
+      await callGAS({ action: "addSong", name, artist, status }, true);
+      alert("Notionに追加しました");
+      document.getElementById('newSong').value = '';
+      document.getElementById('newArtist').value = '';
+      fetchData(true);
     }
 
     function applyAdminMode(isAdmin) {
@@ -292,7 +298,7 @@
         startTime = Date.now(); isRunning = true;
         updateButtonUI(true);
       } else {
-        if (confirm("終了？")) isRunning = false; updateButtonUI(false);
+        if (confirm("タイマーを終了しますか？")) isRunning = false; updateButtonUI(false);
       }
     }
 
@@ -311,7 +317,7 @@
       }
     }, 1000);
 
-    function tryLogin() { const p = prompt("PASS?"); if (p === ADMIN_PASS) applyAdminMode(true); }
+    function tryLogin() { const p = prompt("管理者パスワード?"); if (p === ADMIN_PASS) applyAdminMode(true); }
     function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
     function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
     function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
