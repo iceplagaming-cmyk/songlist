@@ -24,14 +24,14 @@
 
     body::before {
       content: "";
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(18, 18, 18, 0.85); 
       z-index: -1;
       pointer-events: none;
     }
 
+    /* 上部隠れ対策：iPhoneのノッチを考慮 */
     .header-fixed { 
       background: #1a1a1a; 
       padding: 10px 15px; 
@@ -47,15 +47,19 @@
     #loginBtn { background: transparent; color: #666; border: 1px solid #444; padding: 5px 12px; border-radius: 5px; font-size: 12px; cursor: pointer; }
     #actionBtn { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; }
     #actionBtn.active { background: var(--error); }
+    
     .view-selector { display: none; background: #252525; border-radius: 10px; padding: 3px; margin-top: 10px; gap: 4px; }
     .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
     .view-tab.active { background: var(--card); color: var(--accent); }
+
     .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
     .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 0 10px; box-sizing: border-box; }
     .page.active { display: flex; }
+    
     #tabContainer { display: flex; overflow-x: auto; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; -webkit-overflow-scrolling: touch; }
     .artist-tab { padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #888; flex-shrink: 0; }
     .artist-tab.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
+    
     #searchBox { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; margin: 10px 0; outline: none; box-sizing: border-box; flex-shrink: 0; }
     #songList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
     .songBtn { background: rgba(30, 30, 30, 0.7); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; backdrop-filter: blur(5px); }
@@ -63,32 +67,35 @@
     .btn-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .btn-artist { font-size: 11px; color: #888; }
     .btn-date { font-size: 12px; color: var(--accent); font-family: monospace; margin-left: 10px; white-space: nowrap; }
-    
-    /* 追加：コードURL選択エリア */
-    .chord-selector { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
-    .chord-link-btn { 
-      background: #333; color: #fff; border: 1px solid #555; padding: 12px; border-radius: 10px; 
-      text-align: left; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      text-decoration: none;
-    }
-    .chord-link-btn:active { background: #444; }
 
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent); }
-    .modal-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .request-item { display: flex; align-items: center; background: #252525; padding: 12px; border-radius: 10px; border: 1px solid #333; gap: 10px; }
-    .del-btn { background: var(--error); color: white; border: none; border-radius: 5px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
-    .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
-    .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); max-width: 400px; }
-    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: 1px solid #333; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
-    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
-    
     /* Notion追加欄 */
     .add-section { background: #252525; padding: 15px; border-radius: 10px; margin: 10px 0; border: 1px solid #444; flex-shrink: 0; }
     .add-row { display: flex; gap: 8px; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
     .add-row input { flex: 1; min-width: 0; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; box-sizing: border-box; }
     .add-row select { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; width: 100px; box-sizing: border-box; }
     .add-btn { width: 100%; padding: 12px; border-radius: 5px; background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; box-sizing: border-box; }
+
+    /* 追加：コード譜選択用スタイル */
+    .chord-provider-list { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
+    .chord-btn { 
+      background: #333; color: #fff; border: 1px solid #555; 
+      padding: 12px; border-radius: 8px; text-align: left; 
+      font-size: 14px; cursor: pointer; display: flex; 
+      justify-content: space-between; align-items: center; text-decoration: none;
+    }
+    .chord-btn:active { background: #444; transform: scale(0.98); }
+
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent); }
+    .modal-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .request-item { display: flex; align-items: center; background: #252525; padding: 12px; border-radius: 10px; border: 1px solid #333; gap: 10px; }
+    .del-btn { background: var(--error); color: white; border: none; border-radius: 5px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
+
+    .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
+    .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); }
+    
+    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: 1px solid #333; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
+    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
   </style>
 </head>
 <body>
@@ -153,9 +160,9 @@
   <div id="confirmOverlay" class="confirm-overlay">
     <div class="confirm-card">
       <h3 id="confirmTitle" style="color:var(--accent); margin-bottom:5px;"></h3>
-      <div id="chordSelectionArea" class="chord-selector"></div>
-      <p style="font-size: 14px; margin-bottom: 20px;">この曲を歌いますか？</p>
-      <div style="display:flex; gap:12px;">
+      <div id="chordSelectionArea" class="chord-provider-list"></div>
+      <p>この曲を歌いますか？</p>
+      <div style="display:flex; gap:12px; margin-top:25px;">
         <button onclick="closeConfirm()" style="flex:1; padding:15px; background:#444; color:white; border-radius:10px; border:none;">やめる</button>
         <button id="execSingBtn" style="flex:1; padding:15px; background:var(--primary); color:black; font-weight:bold; border-radius:10px; border:none;">歌う！</button>
       </div>
@@ -247,29 +254,30 @@
       });
     }
 
-    // ★URL選択機能：Notionのプロパティ名に合わせた修正
     function onSongTap(song, isFromRequest = false, requestId = null) {
       if (IS_ADMIN) {
         document.getElementById('confirmTitle').innerText = song.name;
         
+        // コード譜URLの表示制御
         const area = document.getElementById('chordSelectionArea');
         area.innerHTML = '';
         
-        // Notionの実際の列名に合わせたマッピング
+        // NotionのURLプロパティを取得（キー名はGAS側の返り値に合わせてください）
         const providers = [
-          { name: "U-FRET", url: song["U-FRET"] },
-          { name: "Chordwiki", url: song["Chordwiki"] },
-          { name: "リンネのコードブック", url: song["リンネのコードブック"] }
+          { name: "U-FRET", url: song.ufret },
+          { name: "Chordwiki", url: song.chordwiki },
+          { name: "リンネのコードブック", url: song.linne }
         ];
 
         let hasUrl = false;
         providers.forEach(p => {
           if (p.url && p.url.trim() !== "" && p.url.startsWith('http')) {
-            const btn = document.createElement('div');
-            btn.className = 'chord-link-btn';
-            btn.innerHTML = `<span>${p.name}</span><span>🔗</span>`;
-            btn.onclick = () => window.open(p.url, '_blank');
-            area.appendChild(btn);
+            const link = document.createElement('a');
+            link.className = 'chord-btn';
+            link.href = p.url;
+            link.target = '_blank';
+            link.innerHTML = `<span>${p.name}</span><span>🔗</span>`;
+            area.appendChild(link);
             hasUrl = true;
           }
         });
@@ -371,6 +379,12 @@
       document.getElementById('nav-' + view).classList.add('active');
     }
 
+    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
+    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
+    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
+    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
+
     setInterval(() => { if (IS_ADMIN) syncWithServer(); }, 3000);
     setInterval(() => {
       if (isRunning && startTime) {
@@ -381,12 +395,6 @@
         if (display) display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
       }
     }, 1000);
-
-    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
-    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
-    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
-    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
-    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
   </script>
 </body>
 </html>
