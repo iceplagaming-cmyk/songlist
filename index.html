@@ -35,14 +35,16 @@
 
     /* 上部隠れ対策：iPhoneのノッチ（上の出っ張り）を考慮したpaddingを追加 */
     .header-fixed { 
-      background: #1a1a1a; 
-      padding: 10px 15px; 
-      border-bottom: 1px solid var(--border); 
-      flex-shrink: 0; 
-      z-index: 100;
-      /* ---  --- */
-      padding-top: max(10px, env(safe-area-inset-top)); /* 上部隠れ対策 */
-    }
+  background: #1a1a1a; 
+  padding: 10px 15px; 
+  border-bottom: 1px solid var(--border); 
+  flex-shrink: 0; 
+  z-index: 100;
+  
+  /* ここを以下のように書き換える */
+  /* 40px の数字を大きくすればするほど、全体が下に下がります */
+  padding-top: calc(40px + env(safe-area-inset-top)); 
+}
 
     .header-row { display: flex; justify-content: space-between; align-items: center; height: 44px; }
     #timerDisplay { font-size: 30px; font-weight: bold; font-family: monospace; color: var(--primary); display: none; }
