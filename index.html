@@ -10,31 +10,32 @@
 
     body { 
       font-family: 'Segoe UI', sans-serif; 
+      background-color: var(--bg); /* 元の背景色 */
       color: var(--text); 
       margin: 0; padding: 0; 
       display: flex; flex-direction: column; 
       height: 100vh; box-sizing: border-box; 
-      overflow: hidden;
-      
-      /* --- 背景画像の設定 --- */
-      /* ※ファイル名が正しいか確認してください。?raw=trueを末尾につけています */
-      background-image: url("7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
+      overflow: hidden; 
+
+      /* --- ここからアイコン設定 --- */
+      background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
       background-repeat: no-repeat;
       background-position: center;
       background-size: 60%; 
       background-attachment: fixed;
-      background-color: var(--bg); /* 画像がない場所の色 */
     }
 
-    /* 背景を「うっすら」させるためのオーバーレイ */
+    /* 背景をうっすら暗くして文字を見やすくする */
     body::before {
       content: "";
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(18, 18, 18, 0.85); 
-      z-index: -1;
+      background: rgba(18, 18, 18, 0.8); /* ここで暗さを調整 */
+      z-index: -1; /* これをマイナスにすることで、曲リストの下に潜り込ませます */
+      pointer-events: none; /* クリックを邪魔しない設定 */
     }
+    /* --- ここまで --- */
 
     .header-fixed { background: #1a1a1a; padding: 10px 15px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 100; }
     .header-row { display: flex; justify-content: space-between; align-items: center; height: 44px; }
