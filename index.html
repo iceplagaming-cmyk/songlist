@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>My Song List</title>
   <style>
     :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
@@ -24,26 +24,40 @@
 
     body::before {
       content: "";
-      position: fixed; top: 0; left: 0;
+      position: fixed;
+      top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(18, 18, 18, 0.85); 
       z-index: -1;
       pointer-events: none;
     }
 
-    /* 上部隠れ対策：iPhoneのノッチを考慮 */
     .header-fixed { 
       background: #1a1a1a; 
       padding: 10px 15px; 
       border-bottom: 1px solid var(--border); 
       flex-shrink: 0; 
       z-index: 100;
-      padding-top: calc(40px + env(safe-area-inset-top)); 
+      padding-top: max(10px, env(safe-area-inset-top)); 
     }
 
-    .header-row { display: flex; justify-content: space-between; align-items: center; height: 44px; }
-    #timerDisplay { font-size: 30px; font-weight: bold; font-family: monospace; color: var(--primary); display: none; }
+    /* ヘッダーのレイアウト調整 */
+    .header-row { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 10px; }
+    
+    /* タイトルと説明文のコンテナ */
+    .title-group { display: flex; flex-direction: column; line-height: 1.2; }
+    #guestTitle { font-size: 25px; font-weight: bold; color: var(--accent); }
+    .sub-desc { font-size: 11px; color: #888; margin-top: 2px; } /* 説明文のスタイル */
+
+    #timerDisplay { font-size: 26px; font-weight: bold; font-family: monospace; color: var(--primary); display: none; }
     .admin-only { display: none; }
+    
+    .site-links { display: flex; gap: 5px; flex-grow: 1; justify-content: center; }
+    .site-links select { 
+      background: #333; color: #fff; border: 1px solid #444; border-radius: 5px; 
+      padding: 4px 8px; font-size: 11px; outline: none; max-width: 90px;
+    }
+
     #loginBtn { background: transparent; color: #666; border: 1px solid #444; padding: 5px 12px; border-radius: 5px; font-size: 12px; cursor: pointer; }
     #actionBtn { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; }
     #actionBtn.active { background: var(--error); }
@@ -51,50 +65,36 @@
     .view-selector { display: none; background: #252525; border-radius: 10px; padding: 3px; margin-top: 10px; gap: 4px; }
     .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
     .view-tab.active { background: var(--card); color: var(--accent); }
-
+    
     .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
     .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 0 10px; box-sizing: border-box; }
     .page.active { display: flex; }
-    
     #tabContainer { display: flex; overflow-x: auto; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; -webkit-overflow-scrolling: touch; }
     .artist-tab { padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #888; flex-shrink: 0; }
     .artist-tab.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
-    
     #searchBox { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; margin: 10px 0; outline: none; box-sizing: border-box; flex-shrink: 0; }
     #songList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+    
     .songBtn { background: rgba(30, 30, 30, 0.7); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; backdrop-filter: blur(5px); }
     .btn-main { display: flex; flex-direction: column; flex: 1; text-align: left; overflow: hidden; }
     .btn-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .btn-artist { font-size: 11px; color: #888; }
     .btn-date { font-size: 12px; color: var(--accent); font-family: monospace; margin-left: 10px; white-space: nowrap; }
-
-    /* Notion追加欄 */
-    .add-section { background: #252525; padding: 15px; border-radius: 10px; margin: 10px 0; border: 1px solid #444; flex-shrink: 0; }
+    
+    .add-section { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #444; flex-shrink: 0; margin-top: 10px; }
     .add-row { display: flex; gap: 8px; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
     .add-row input { flex: 1; min-width: 0; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; box-sizing: border-box; }
     .add-row select { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; width: 100px; box-sizing: border-box; }
     .add-btn { width: 100%; padding: 12px; border-radius: 5px; background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; box-sizing: border-box; }
-
-    /* 追加：コード譜選択用スタイル */
-    .chord-provider-list { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
-    .chord-btn { 
-      background: #333; color: #fff; border: 1px solid #555; 
-      padding: 12px; border-radius: 8px; text-align: left; 
-      font-size: 14px; cursor: pointer; display: flex; 
-      justify-content: space-between; align-items: center; text-decoration: none;
-    }
-    .chord-btn:active { background: #444; transform: scale(0.98); }
-
+    
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent); }
     .modal-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
     .request-item { display: flex; align-items: center; background: #252525; padding: 12px; border-radius: 10px; border: 1px solid #333; gap: 10px; }
     .del-btn { background: var(--error); color: white; border: none; border-radius: 5px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
-
     .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
     .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); }
-    
-    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: 1px solid #333; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
+    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: none; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
     #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
   </style>
 </head>
@@ -105,7 +105,21 @@
   <div class="header-fixed">
     <div class="header-row">
       <div id="timerDisplay">00:00</div>
-      <div id="guestTitle" style="font-size: 25px; font-weight: bold; color: var(--accent);">花宮</div>
+      
+      <div class="title-group" id="titleContainer">
+        <div id="guestTitle">花宮</div>
+        <div class="sub-desc" id="guestDesc">曲をタップするとリクエストできます</div>
+      </div>
+      
+      <div class="admin-only site-links" id="linkControls">
+        <select onchange="if(this.value) window.open(this.value, '_blank'); this.value='';">
+          <option value="">🔗 Link...</option>
+          <option value="https://www.notion.so">Notion</option>
+          <option value="https://twitcasting.tv/">ツイキャス</option>
+          <option value="https://github.com/">GitHub</option>
+        </select>
+      </div>
+
       <div style="display:flex; gap:10px; align-items:center;">
         <div class="admin-only" id="adminControls" style="gap:10px; align-items:center; display:none;">
           <button id="requestBtn" onclick="openRequestModal()" style="background:#333; border:none; border-radius:50%; width:40px; height:40px; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer;">📩<span id="requestBadge" style="position:absolute; top:-5px; right:-5px; background:var(--error); color:white; border-radius:50%; padding:2px 6px; font-size:10px; display:none;">0</span></button>
@@ -158,10 +172,7 @@
   </div>
 
   <div id="confirmOverlay" class="confirm-overlay">
-    <div class="confirm-card">
-      <h3 id="confirmTitle" style="color:var(--accent); margin-bottom:5px;"></h3>
-      <div id="chordSelectionArea" class="chord-provider-list"></div>
-      <p>この曲を歌いますか？</p>
+    <div class="confirm-card"><h3 id="confirmTitle" style="color:var(--accent);"></h3><p>この曲を歌いますか？</p>
       <div style="display:flex; gap:12px; margin-top:25px;">
         <button onclick="closeConfirm()" style="flex:1; padding:15px; background:#444; color:white; border-radius:10px; border:none;">やめる</button>
         <button id="execSingBtn" style="flex:1; padding:15px; background:var(--primary); color:black; font-weight:bold; border-radius:10px; border:none;">歌う！</button>
@@ -170,12 +181,11 @@
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxgui_PfT89LI-SetbPgrHXl1y7PGzgjb9_IZRbVk8j0FR4nn8dZN1LTqhO_wTXQyb76Q/exec";
-
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzA1C4iZqi8roc57Hp9Ha4wiUqd_ca1awGVM5HAvWgLMtDO0sSZyR6mpBPoqr9YPIksfQ/exec";
     let IS_ADMIN = false;
     const ADMIN_PASS = "0000"; 
     let startTime = null, isRunning = false, allSongs = [], currentRequests = [], currentTab = "すべて";
-    const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元貴"];
+    const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元開"];
 
     async function callGAS(params, showLoading = false) {
       if (showLoading) document.getElementById('loadingOverlay').style.display = 'flex';
@@ -183,7 +193,7 @@
       try {
         const response = await fetch(`${GAS_URL}?${queryString}`);
         return await response.json();
-      } catch (e) { console.error("GAS通信エラー:", e); } 
+      } catch (e) { console.error("GAS通信エラー:", e); }
       finally { if (showLoading) document.getElementById('loadingOverlay').style.display = 'none'; }
     }
 
@@ -200,9 +210,14 @@
       if (res && res.startTime) {
         const serverTime = parseInt(res.startTime);
         if (!isRunning || Math.abs(startTime - serverTime) > 1000) {
-          startTime = serverTime; isRunning = true; updateButtonUI(true);
+          startTime = serverTime;
+          isRunning = true;
+          updateButtonUI(true);
         }
-      } else if (isRunning) { isRunning = false; updateButtonUI(false); }
+      } else if (isRunning) {
+        isRunning = false;
+        updateButtonUI(false);
+      }
     }
 
     async function fetchData(showUI = false) {
@@ -257,32 +272,6 @@
     function onSongTap(song, isFromRequest = false, requestId = null) {
       if (IS_ADMIN) {
         document.getElementById('confirmTitle').innerText = song.name;
-        
-        // コード譜URLの表示制御
-        const area = document.getElementById('chordSelectionArea');
-        area.innerHTML = '';
-        
-        // NotionのURLプロパティを取得（キー名はGAS側の返り値に合わせてください）
-        const providers = [
-          { name: "U-FRET", url: song.ufret },
-          { name: "Chordwiki", url: song.chordwiki },
-          { name: "リンネのコードブック", url: song.linne }
-        ];
-
-        let hasUrl = false;
-        providers.forEach(p => {
-          if (p.url && p.url.trim() !== "" && p.url.startsWith('http')) {
-            const link = document.createElement('a');
-            link.className = 'chord-btn';
-            link.href = p.url;
-            link.target = '_blank';
-            link.innerHTML = `<span>${p.name}</span><span>🔗</span>`;
-            area.appendChild(link);
-            hasUrl = true;
-          }
-        });
-        area.style.display = hasUrl ? 'flex' : 'none';
-
         document.getElementById('confirmOverlay').style.display = 'flex';
         document.getElementById('execSingBtn').onclick = async () => {
           if (!isRunning) return alert("STARTを押してください");
@@ -302,11 +291,14 @@
       if (!isRunning) {
         const res = await callGAS({ action: 'startFromExternal' });
         if (res && res.startTime) {
-          startTime = parseInt(res.startTime); isRunning = true; updateButtonUI(true);
+          startTime = parseInt(res.startTime);
+          isRunning = true;
+          updateButtonUI(true);
         }
       } else {
         if (confirm("配信を終了しますか？")) {
-          isRunning = false; updateButtonUI(false);
+          isRunning = false;
+          updateButtonUI(false);
           await callGAS({ action: 'clearExternalStart' });
         }
       }
@@ -314,7 +306,10 @@
 
     function updateButtonUI(active) {
       const btn = document.getElementById('actionBtn');
-      if (btn) { btn.innerText = active ? "🛑 STOP" : "🎥 START"; btn.classList.toggle('active', active); }
+      if (btn) {
+        btn.innerText = active ? "🛑 STOP" : "🎥 START";
+        btn.classList.toggle('active', active);
+      }
     }
 
     function executeSing(song) {
@@ -327,7 +322,10 @@
       IS_ADMIN = isAdmin;
       localStorage.setItem('isAdminLoggedIn', isAdmin);
       document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
-      document.getElementById('guestTitle').style.display = isAdmin ? 'none' : 'block';
+      
+      // リスナー用タイトルの表示切り替え
+      document.getElementById('titleContainer').style.display = isAdmin ? 'none' : 'flex';
+      
       document.getElementById('loginBtn').style.display = isAdmin ? 'none' : 'block';
       document.getElementById('timerDisplay').style.display = isAdmin ? 'block' : 'none';
       if (isAdmin) setInterval(checkRequests, 10000);
@@ -338,7 +336,10 @@
       if (reqs) {
         currentRequests = reqs;
         const badge = document.getElementById('requestBadge');
-        if (badge) { badge.innerText = reqs.length; badge.style.display = reqs.length > 0 ? 'block' : 'none'; }
+        if (badge) {
+          badge.innerText = reqs.length;
+          badge.style.display = reqs.length > 0 ? 'block' : 'none';
+        }
       }
     }
 
@@ -359,7 +360,8 @@
     async function deleteReq(id) {
       if (confirm("削除しますか？")) {
         await callGAS({ action: "deleteRequest", id: id }, true);
-        checkRequests(); openRequestModal();
+        checkRequests();
+        openRequestModal();
       }
     }
 
@@ -369,7 +371,8 @@
       const status = document.getElementById('newStatus').value;
       if (!name || !artist) return alert("入力してください");
       await callGAS({ action: "addSong", name, artist, status }, true);
-      alert("Notionに追加しました"); fetchData(false);
+      alert("Notionに追加しました");
+      fetchData(false);
     }
 
     function switchView(view) {
@@ -378,12 +381,6 @@
       document.getElementById('page-' + view).classList.add('active');
       document.getElementById('nav-' + view).classList.add('active');
     }
-
-    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
-    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
-    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
-    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
-    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
 
     setInterval(() => { if (IS_ADMIN) syncWithServer(); }, 3000);
     setInterval(() => {
@@ -395,6 +392,12 @@
         if (display) display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
       }
     }, 1000);
+
+    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
+    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
+    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
+    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
   </script>
 </body>
 </html>
