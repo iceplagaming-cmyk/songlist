@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>My Song List</title>
   <style>
     :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
@@ -34,13 +34,15 @@
 
     /* 上部隠れ対策：iPhoneのノッチを考慮 */
     .header-fixed { 
-      background: #1a1a1a; 
-      padding: 10px 15px; 
-      border-bottom: 1px solid var(--border); 
-      flex-shrink: 0; 
-      z-index: 100;
-      padding-top: calc(60px + env(safe-area-inset-top)); 
-    }
+  background: #1a1a1a; 
+  padding: 10px 15px; 
+  border-bottom: 1px solid var(--border); 
+  flex-shrink: 0; 
+  z-index: 100;
+  
+  /* ★ここを修正！ノッチの高さ(env)に、さらに15pxの余裕を持たせます */
+  padding-top: calc(15px + env(safe-area-inset-top)); 
+}
 
     /* ヘッダーのレイアウト調整 */
     .header-row { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 10px; }
