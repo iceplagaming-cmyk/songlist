@@ -240,7 +240,10 @@
         else counts[s.artist] = (counts[s.artist] || 0) + 1;
       });
       const majorArtists = Object.keys(counts).filter(a => counts[a] >= 10).sort();
-      const tabs = [{ id: "すべて", label: `すべて (${allSongs.length})` }, { id: "最近歌った順", label: "最近歌った順" }];
+      // 最近歌った順を消して、スッキリさせました
+      const tabs = [
+        { id: "すべて", label: `すべて (${allSongs.length})` }
+      ];
       if (ohmoriTotal > 0) tabs.push({ id: "大森元貴曲", label: `大森元貴曲 (${ohmoriTotal})` });
       majorArtists.forEach(name => tabs.push({ id: name, label: `${name} (${counts[name]})` }));
       
