@@ -531,44 +531,47 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
 
     function openRequestModal() {
   const modal = document.getElementById('requestModal');
+  // 上下それぞれの入れ物を取得
   const songList = document.getElementById('songList');
   const messageList = document.getElementById('messageList');
   
   modal.style.display = 'flex';
   
-  // 中身を一旦リセット
+  // 表示を一度リセット（これがないとダブります）
   songList.innerHTML = '';
   messageList.innerHTML = '';
 
-  // 1つもリクエストがない場合
+  // データが1つもない場合
   if (currentRequests.length === 0) {
-    songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666; font-size:12px;">なし</div>';
-    messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666; font-size:12px;">なし</div>';
+    songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
+    messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
     return;
   }
 
   currentRequests.forEach(req => {
+    // アーティスト名を見て「メッセージ」か「曲」か判別
     const isChat = req.artist === "💬 MESSAGE";
+    
     const div = document.createElement('div');
     div.className = 'request-item';
     div.style.marginBottom = '8px';
 
-    // HTMLの組み立て
     div.innerHTML = `
       <div style="flex:1">
         <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">
-          ${isChat ? '' : '♪ '}${req.name}
+          ${isChat ? '✉️ ' : '♪ '}${req.name}
         </b><br>
         <small style="color:#888;">${isChat ? 'Message' : req.artist}</small>
       </div>
       <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
     `;
 
+    // 判別結果に基づいて、入れる場所を変える
     if (isChat) {
-      // メッセージなら下半分へ
+      // 下半分のメッセージ欄へ
       messageList.appendChild(div);
     } else {
-      // 曲なら上半分へ
+      // 上半分の曲リストへ
       div.style.cursor = 'pointer';
       div.onclick = () => {
         const fullSongData = allSongs.find(s => s.name.trim() === req.name.trim());
@@ -578,9 +581,9 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
     }
   });
 
-  // どちらかが空の場合の「なし」表示
-  if (songList.innerHTML === '') songList.innerHTML = '<div style="color:#666; font-size:12px; padding:5px;">曲のリクエストはありません</div>';
-  if (messageList.innerHTML === '') messageList.innerHTML = '<div style="color:#666; font-size:12px; padding:5px;">メッセージはありません</div>';
+  // 振り分けた結果、どちらかが空っぽだった時の補助表示
+  if (songList.innerHTML === '') songList.innerHTML = '<div style="color:#666; font-size:12px; padding:10px;">曲リクエストなし</div>';
+  if (messageList.innerHTML === '') messageList.innerHTML = '<div style="color:#666; font-size:12px; padding:10px;">メッセージなし</div>';
 }
     async function deleteReq(id) {
       if (confirm("削除しますか？")) {
