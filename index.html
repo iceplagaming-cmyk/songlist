@@ -103,30 +103,24 @@
 
   <div id="loadingOverlay">読み込み中...</div>
 
-  <div class="header-fixed">
+  <div class="header-fixed" style="padding-top: calc(10px + env(safe-area-inset-top));">
     <div class="header-row">
       <div id="timerDisplay">00:00</div>
       
       <div class="title-group" id="titleContainer">
         <div id="guestTitle">花宮</div>
-        <div class="sub-desc" id="guestDesc">曲をタップするとリクエストできます。並べ替えもできます。</div>
+        <div class="sub-desc" id="guestDesc">曲をタップするとリクエストできます。</div>
       </div>
 
-      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0; height: 48px;">
-        
-        <input type="text" id="searchBox" placeholder="🔍 検索..." oninput="filterSongs()" 
-               style="flex: 1; height: 100%; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; outline: none; box-sizing: border-box;">
-        
-        <select id="sortSelect" onchange="filterSongs()" 
-                style="width: 110px; height: 100%; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--accent); font-size: 12px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center;">
-          <option value="artist">アーティスト順</option>
-          <option value="name">曲名順</option>
-          <option value="date">直近歌った順</option>
-        </select>
-      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="admin-only" id="adminControls" style="gap:10px; align-items:center; display:none;">
+          <button id="requestBtn" onclick="openRequestModal()" style="background:#333; border:none; border-radius:50%; width:40px; height:40px; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer;">📩<span id="requestBadge" style="position:absolute; top:-5px; right:-5px; background:var(--error); color:white; border-radius:50%; padding:2px 6px; font-size:10px; display:none;">0</span></button>
+          <button id="actionBtn" onclick="handleAction()">🎥 START</button>
+        </div>
         <button id="loginBtn" onclick="tryLogin()">ログイン</button>
       </div>
     </div>
+
     <div id="adminTabNav" class="view-selector admin-only">
       <div id="nav-music" class="view-tab active" onclick="switchView('music')">🎵 曲選択</div>
       <div id="nav-log" class="view-tab" onclick="switchView('log')">📋 記録/追加</div>
@@ -137,10 +131,12 @@
     <div id="page-music" class="page active">
       <div id="tabContainer">読み込み中...</div>
       
-      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0;">
-        <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; outline: none; box-sizing: border-box;">
+      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0; height: 46px;">
+        <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()" 
+               style="flex: 1; height: 100%; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; outline: none; box-sizing: border-box;">
         
-        <select id="sortSelect" onchange="filterSongs()" style="width: 100px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--accent); font-size: 11px; outline: none; cursor: pointer; padding: 0 5px;">
+        <select id="sortSelect" onchange="filterSongs()" 
+                style="width: 105px; height: 100%; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--accent); font-size: 11px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center;">
           <option value="artist">アーティスト順</option>
           <option value="name">曲名順</option>
           <option value="date">直近歌った順</option>
