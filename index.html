@@ -280,31 +280,42 @@
   </div>
 
   <div id="requestModal" class="modal">
-  <div class="modal-header">
-    <h3>📥 REQUESTS & MESSAGES</h3>
-    <button onclick="closeRequestModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
+  <div id="requestModal" class="modal">
+    <div class="modal-header">
+      <h3>📥 REQUESTS & MESSAGES</h3>
+      <button onclick="closeRequestModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
+    </div>
+    <div class="modal-content" style="display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">🎵 SONG REQUESTS</h4>
+        <div id="modalSongList"></div> </div>
+      <div>
+        <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">✉️ MESSAGES</h4>
+        <div id="messageList"></div>
+      </div>
+    </div>
   </div>
-  <div class="modal-content" style="display: flex; flex-direction: column; gap: 20px;">
-    
-    <div>
-      <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">🎵 SONG REQUESTS</h4>
-      <div id="modalSongList"></div> </div>
-
-    <div>
-      <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">✉️ MESSAGES</h4>
-      <div id="messageList"></div> </div>
-
-  </div>
-</div>
 
   <div id="confirmOverlay" class="confirm-overlay">
     <div class="confirm-card">
-        <h3 id="confirmTitle" style="color:var(--accent);"></h3>
-        <p>この曲を歌いますか？</p>
+      <h3 id="confirmTitle" style="color:var(--accent);"></h3>
+      <p>この曲を歌いますか？</p>
       <div style="display:flex; gap:12px; margin-top:25px;">
         <button onclick="closeConfirm()" style="flex:1; padding:15px; background:#444; color:white; border-radius:10px; border:none;">やめる</button>
         <button id="execSingBtn" style="flex:1; padding:15px; background:var(--primary); color:black; font-weight:bold; border-radius:10px; border:none;">歌う！</button>
       </div>
+    </div>
+  </div>
+
+  <div id="msgModal" class="modal">
+    <div class="modal-header">
+      <h3>✉️ MESSAGE</h3>
+      <button onclick="closeMsgModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
+    </div>
+    <div class="modal-content">
+      <p style="font-size:12px; color:#888;">花宮へのメッセージを送れます。</p>
+      <textarea id="chatInput" placeholder="メッセージを入力してください..."></textarea>
+      <button onclick="sendChatMessage()" style="width:100%; padding:15px; background:var(--accent); color:black; font-weight:bold; border-radius:12px; border:none; margin-top:15px; font-size:16px;">送信する</button>
     </div>
   </div>
 
@@ -540,61 +551,41 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
     }
 
     function openRequestModal() {
-  const modal = document.getElementById('requestModal');
-  // 上下それぞれの入れ物を取得
-  const songList = document.getElementById('modalSongList');
-  const messageList = document.getElementById('messageList');
-  
-  modal.style.display = 'flex';
-  
-  // 表示を一度リセット（これがないとダブります）
-  songList.innerHTML = '';
-  messageList.innerHTML = '';
+      const modal = document.getElementById('requestModal');
+      const songList = document.getElementById('modalSongList'); // ここが重要
+      const messageList = document.getElementById('messageList');
+      modal.style.display = 'flex';
+      songList.innerHTML = '';
+      messageList.innerHTML = '';
 
-  // データが1つもない場合
-  if (currentRequests.length === 0) {
-    songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
-    messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
-    return;
-  }
+      if (currentRequests.length === 0) {
+        songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
+        messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
+        return;
+      }
 
-  currentRequests.forEach(req => {
-    // アーティスト名を見て「メッセージ」か「曲」か判別
-    const isChat = req.artist === "💬 MESSAGE";
-    
-    const div = document.createElement('div');
-    div.className = 'request-item';
-    div.style.marginBottom = '8px';
-
-    div.innerHTML = `
-      <div style="flex:1">
-        <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">
-          ${isChat ? '✉️ ' : '♪ '}${req.name}
-        </b><br>
-        <small style="color:#888;">${isChat ? 'Message' : req.artist}</small>
-      </div>
-      <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
-    `;
-
-    // 判別結果に基づいて、入れる場所を変える
-    if (isChat) {
-      // 下半分のメッセージ欄へ
-      messageList.appendChild(div);
-    } else {
-      // 上半分の曲リストへ
-      div.style.cursor = 'pointer';
-      div.onclick = () => {
-        const fullSongData = allSongs.find(s => s.name.trim() === req.name.trim());
-        showAdminMenu(fullSongData || { name: req.name, artist: req.artist }, true, req.id);
-      };
-      songList.appendChild(div);
+      currentRequests.forEach(req => {
+        const isChat = req.artist === "💬 MESSAGE";
+        const div = document.createElement('div');
+        div.className = 'request-item';
+        div.innerHTML = `
+          <div style="flex:1">
+            <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">${isChat ? '✉️ ' : '♪ '}${req.name}</b><br>
+            <small style="color:#888;">${isChat ? 'Message' : req.artist}</small>
+          </div>
+          <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
+        `;
+        if (isChat) { messageList.appendChild(div); } 
+        else {
+          div.style.cursor = 'pointer';
+          div.onclick = () => {
+            const fullSongData = allSongs.find(s => s.name.trim() === req.name.trim());
+            showAdminMenu(fullSongData || { name: req.name, artist: req.artist }, true, req.id);
+          };
+          songList.appendChild(div);
+        }
+      });
     }
-  });
-
-  // 振り分けた結果、どちらかが空っぽだった時の補助表示
-  if (songList.innerHTML === '') songList.innerHTML = '<div style="color:#666; font-size:12px; padding:10px;">曲リクエストなし</div>';
-  if (messageList.innerHTML === '') messageList.innerHTML = '<div style="color:#666; font-size:12px; padding:10px;">メッセージなし</div>';
-}
     async function deleteReq(id) {
       if (confirm("削除しますか？")) {
         await callGAS({ action: "deleteRequest", id: id }, true);
