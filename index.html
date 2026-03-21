@@ -288,15 +288,15 @@
 
   <div id="requestModal" class="modal">
     <div class="modal-header">
-      <h3>📥 REQUESTS & MESSAGES</h3>
+      <h3>📥 リクエスト・メッセージ</h3>
       <button onclick="closeRequestModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
     </div>
     <div class="modal-content" style="display: flex; flex-direction: column; gap: 20px;">
       <div>
-        <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">🎵 SONG REQUESTS</h4>
+        <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">リクエスト</h4>
         <div id="modalSongList"></div> </div>
       <div>
-        <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">✉️ MESSAGES</h4>
+        <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">メッセージ</h4>
         <div id="messageList"></div>
       </div>
     </div>
@@ -577,7 +577,7 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
         div.innerHTML = `
           <div style="flex:1">
             <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">${isChat ? '✉️ ' : '♪ '}${req.name}</b><br>
-            <small style="color:#888;">${isChat ? 'Message' : req.artist}</small>
+            <small style="color:#888;">${isChat ? '' : req.artist}</small>
           </div>
           <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
         `;
