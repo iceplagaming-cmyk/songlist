@@ -278,7 +278,7 @@
     
     <div>
       <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">🎵 SONG REQUESTS</h4>
-      <div id="songList"></div> </div>
+      <div id="modalSongList"></div> </div>
 
     <div>
       <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">✉️ MESSAGES</h4>
@@ -532,7 +532,7 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
     function openRequestModal() {
   const modal = document.getElementById('requestModal');
   // 上下それぞれの入れ物を取得
-  const songList = document.getElementById('songList');
+  const songList = document.getElementById('modalSongList');
   const messageList = document.getElementById('messageList');
   
   modal.style.display = 'flex';
