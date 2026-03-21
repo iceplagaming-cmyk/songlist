@@ -32,7 +32,6 @@
       pointer-events: none;
     }
 
-    /* 上部隠れ対策：iPhoneのノッチを考慮 */
     .header-fixed { 
   background: #1a1a1a; 
   padding: 10px 15px; 
@@ -40,8 +39,8 @@
   flex-shrink: 0; 
   z-index: 100;
   
-  /* ★ここを修正！ノッチの高さ(env)に、さらに15pxの余裕を持たせます */
-  padding-top: calc(15px + env(safe-area-inset-top)); 
+  /* ★ 25px以上足すことで、ノッチの下に完全にボタンを露出させます */
+  padding-top: calc(25px + env(safe-area-inset-top)); 
 }
 
     /* ヘッダーのレイアウト調整 */
@@ -105,7 +104,7 @@
 
   <div id="loadingOverlay">読み込み中...</div>
 
-  <div class="header-fixed" style="padding-top: calc(10px + env(safe-area-inset-top));">
+  <div class="header-fixed">
     <div class="header-row">
       <div id="timerDisplay">00:00</div>
       
