@@ -17,30 +17,21 @@
     :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
     
     body { 
-      font-family: 'Segoe UI', 'Noto Sans JP', sans-serif; 
-      background-color: var(--bg); 
-      color: var(--text); 
-      margin: 0; padding: 0; 
-      display: flex; flex-direction: column; 
-      min-height: 100vh; 
-      box-sizing: border-box; 
-      overflow: hidden; 
-      background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover; 
-      background-attachment: fixed;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%; 
-      background: rgba(18, 18, 18, 0.85); 
-      z-index: -1;
-      pointer-events: none;
-    }
+  font-family: 'Segoe UI', 'Noto Sans JP', sans-serif; 
+  /* 背景指定を1つにまとめ、透過レイヤーを画像の上に重ねます */
+  background: 
+    linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
+    url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover; 
+  background-attachment: fixed;
+  margin: 0; padding: 0; 
+  display: flex; flex-direction: column; 
+  height: 100vh; /* min-heightより固定の方が安定します */
+  box-sizing: border-box; 
+  overflow: hidden; 
+}
 
     /* iPhoneノッチ対策: 完全に不透明な背景色を指定して網掛けを防止 */
     .header-fixed { 
@@ -82,41 +73,48 @@
     
     .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; }
     .page { 
-      position: absolute; 
-      top: 0; left: 0; 
-      width: 100%; 
-      height: 100%; 
-      display: none; 
-      flex-direction: column; 
-      padding: 0 10px; 
-      box-sizing: border-box; 
-      overflow-y: auto; 
-      -webkit-overflow-scrolling: touch;
-    }
+  position: absolute; 
+  top: 0; left: 0; 
+  width: 100%; 
+  height: 100%; 
+  display: none; 
+  flex-direction: column; 
+  padding: 0 10px; 
+  box-sizing: border-box; 
+  overflow-y: auto; 
+  overflow-x: hidden; /* これを追加：横方向のはみ出しを禁止 */
+  -webkit-overflow-scrolling: touch;
+}
     .page.active { display: flex; }
 
     /* --- 追加・変更：検索とタブの固定エリア --- */
     .sticky-controls {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(18, 18, 18, 0.95); /* スクロールした曲を綺麗に隠す */
-      backdrop-filter: blur(8px);
-      margin: 0 -10px; /* .pageのpaddingを打ち消して画面幅いっぱいに */
-      padding: 0 10px 10px 10px;
-      border-bottom: 1px solid var(--border);
-    }
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(8px);
+  /* 左右のマイナスマージンを維持しつつ、幅を calc で調整 */
+  margin: 0 -10px; 
+  width: calc(100% + 20px); 
+  padding: 0 10px 10px 10px;
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box; /* 必須 */
+}
 
-    #tabContainer { 
-      display: flex; 
-      overflow-x: auto; 
-      gap: 8px; 
-      margin: 0 -10px; /* 画面端までスクロール可能に */
-      padding: 12px 10px; /* 内側に余白を取り直して最初のタブの位置を合わせる */
-      flex-shrink: 0; 
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox用スクロールバー非表示 */
-    }
+#tabContainer { 
+  display: flex; 
+  overflow-x: auto; 
+  gap: 8px; 
+  /* ここも width を calc で制御 */
+  margin: 0 -10px; 
+  width: calc(100% + 20px);
+  padding: 12px 10px; 
+  flex-shrink: 0; 
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  box-sizing: border-box; /* 必須 */
+}
     /* Chrome/Safari用スクロールバー非表示（タブ周りをスッキリさせるため） */
     #tabContainer::-webkit-scrollbar { display: none; }
 
