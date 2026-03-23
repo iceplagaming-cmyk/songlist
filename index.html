@@ -16,30 +16,30 @@
   <style>
     :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
     
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background-color: var(--bg); 
-      color: var(--text); 
-      margin: 0; padding: 0; 
-      display: flex; flex-direction: column; 
-      height: 100dvh; box-sizing: border-box; 
-      overflow: hidden; 
-      background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
-      background-repeat: no-repeat;
-      background-position: calc(50% + 42px) 50%;
-      background-size: 180%; 
-      background-attachment: fixed;
-    }
+    body {  
+  font-family: 'Segoe UI', 'Noto Sans JP', sans-serif; /* フォント追加 */
+  background-color: #121212; 
+  color: var(--text); 
+  margin: 0; padding: 0; 
+  display: flex; flex-direction: column; 
+  min-height: 100vh; /* height: 100dvh から変更 */
+  box-sizing: border-box; 
+  background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover; /* 180%からcoverに変更（PC対応） */
+  background-attachment: fixed;
+}
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 120vh;
-      background: rgba(18, 18, 18, 0.85); 
-      z-index: -1;
-      pointer-events: none;
-    }
+body::before {
+  content: "";
+  position: fixed; /* absoluteからfixedに変更 */
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* 透明度を少し濃く */
+  z-index: -1;
+  pointer-events: none;
+}
 
     /* iPhoneノッチ対策：ここをスッキリ整理しました */
     .header-fixed { 
@@ -80,7 +80,15 @@
     .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
     .view-tab.active { background: var(--card); color: var(--accent); }
     
-    .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .content-area { 
+  flex-grow: 1; 
+  position: relative; 
+  display: flex; 
+  flex-direction: column;
+  max-width: 800px; /* PCでの最大幅を制限 */
+  margin: 0 auto;   /* 中央寄せ */
+  width: 100%;
+}
     .page { 
       position: absolute; 
       top: 0; left: 0; 
