@@ -207,26 +207,27 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  /* 曲のボタン (.songBtn) と同じ色と透明度 */
+  /* 曲のボタンと同じ透け感 */
   background: rgba(30, 30, 30, 0.7); 
-  /* 曲のボタンと同じぼかし具合 */
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+
+  /* 【重要】親の padding (10px) を打ち消して画面端まで広げる */
+  margin-left: -10px;
+  margin-right: -10px;
   
-  /* 上下の余白を少し整える（お好みで） */
-  padding: 5px 0;
-  margin: 0 -10px; /* 親のpadding分を外に広げて端まで透過させる */
-  padding-left: 10px;
-  padding-right: 10px;
+  /* 【重要】中身が端にくっつかないように内側に余白を戻す */
+  padding: 5px 10px; 
+  
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 既存の tabContainer のボーダーを少し調整 */
+/* タブコンテナの余白も微調整して端までスクロールしやすくする */
 #tabContainer {
   display: flex;
   overflow-x: auto;
   gap: 8px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
   -webkit-overflow-scrolling: touch;
 }
 
