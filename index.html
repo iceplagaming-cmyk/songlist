@@ -1,715 +1,671 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="HanamiYa">
 
 <link rel="apple-touch-icon" href="https://github.com/Hanamiya-Song/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>My Song List</title>
-  <style>
-    :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
-    
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background-color: var(--bg); 
-      color: var(--text); 
-      margin: 0; padding: 0; 
-      display: flex; flex-direction: column; 
-      height: 100dvh; box-sizing: border-box; 
-      overflow-x: hidden;
-      width: 100%;
-      background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
-      background-repeat: no-repeat;
-      background-position: calc(50% + 42px) 50%;
-      background-size: 180%; 
-      background-attachment: fixed;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>My Song List</title>
+  <style>
+    :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; --primary: #03dac6; --error: #cf6679; --success: #28a745; --border: #333; }
+    
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0; padding: 0; 
+      display: flex; flex-direction: column; 
+      height: 100dvh; box-sizing: border-box; 
+      overflow: hidden; 
+      background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
+      background-repeat: no-repeat;
+      background-position: calc(50% + 42px) 50%;
+      background-size: 180%; 
+      background-attachment: fixed;
+    }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 120vh;
-      background: rgba(18, 18, 18, 0.85); 
-      z-index: -1;
-      pointer-events: none;
-    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 120vh;
+      background: rgba(18, 18, 18, 0.85); 
+      z-index: -1;
+      pointer-events: none;
+    }
 
-    /* iPhoneノッチ対策：ここをスッキリ整理しました */
-    .header-fixed { 
-      background: #1a1a1a; 
-      padding: 10px 15px; 
-      border-bottom: 1px solid var(--border); 
-      flex-shrink: 0; 
-      z-index: 100;
-      padding-top: calc(30px + env(safe-area-inset-top)); 
-    }
+    /* iPhoneノッチ対策：ここをスッキリ整理しました */
+    .header-fixed { 
+      background: #1a1a1a; 
+      padding: 10px 15px; 
+      border-bottom: 1px solid var(--border); 
+      flex-shrink: 0; 
+      z-index: 100;
+      padding-top: calc(30px + env(safe-area-inset-top)); 
+    }
 
-    .header-row { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 10px; }
-    
-    .title-group { display: flex; flex-direction: column; line-height: 1.2; }
-    #guestTitle { font-family: 'Orbitron', sans-serif ;font-size: 25px; font-weight: bold; color: var(--accent); }
-    .sub-desc { font-size: 11px; color: #888; margin-top: 2px; }
+    .header-row { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 10px; }
+    
+    .title-group { display: flex; flex-direction: column; line-height: 1.2; }
+    #guestTitle { font-family: 'Orbitron', sans-serif ;font-size: 25px; font-weight: bold; color: var(--accent); }
+    .sub-desc { font-size: 11px; color: #888; margin-top: 2px; }
 
-    #timerDisplay { font-size: 26px; font-weight: bold; font-family: monospace; color: var(--primary); display: none; }
-    .admin-only { display: none; }
+    #timerDisplay { font-size: 26px; font-weight: bold; font-family: monospace; color: var(--primary); display: none; }
+    .admin-only { display: none; }
 
-    #loginBtn { background: transparent; color: #666; border: 1px solid #444; padding: 8px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
-    
-    /* START/STOPボタンの設定を1つに統合 */
-    #actionBtn { 
-      background: var(--success); 
-      color: white; 
-      border: none; 
-      padding: 10px 20px; 
-      border-radius: 20px; 
-      font-size: 14px; 
-      font-weight: bold; 
-      min-width: 95px;
-      cursor: pointer;
-    }
-    #actionBtn.active { background: var(--error); }
-    
-    .view-selector { display: none; background: #252525; border-radius: 10px; padding: 3px; margin-top: 10px; gap: 4px; }
-    .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
-    .view-tab.active { background: var(--card); color: var(--accent); }
-    
-    .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .page {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh; /* 画面いっぱいの高さ */
-  overflow: hidden; /* 親のスクロールを禁止 */
-  padding: 0; /* 余計な余白を消す */
-}
-    .page.active { display: flex; }
+    #loginBtn { background: transparent; color: #666; border: 1px solid #444; padding: 8px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+    
+    /* START/STOPボタンの設定を1つに統合 */
+    #actionBtn { 
+      background: var(--success); 
+      color: white; 
+      border: none; 
+      padding: 10px 20px; 
+      border-radius: 20px; 
+      font-size: 14px; 
+      font-weight: bold; 
+      min-width: 95px;
+      cursor: pointer;
+    }
+    #actionBtn.active { background: var(--error); }
+    
+    .view-selector { display: none; background: #252525; border-radius: 10px; padding: 3px; margin-top: 10px; gap: 4px; }
+    .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
+    .view-tab.active { background: var(--card); color: var(--accent); }
+    
+    .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .page { 
+      position: absolute; 
+      top: 0; left: 0; 
+      width: 100%; 
+      height: 100%; 
+      display: none; 
+      flex-direction: column; 
+      padding: 0 10px; 
+      box-sizing: border-box; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch;
+    }
+    .page.active { display: flex; }
 
-    #tabContainer { display: flex; overflow-x: auto; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; -webkit-overflow-scrolling: touch; }
-    .artist-tab { padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #888; flex-shrink: 0; }
-    .artist-tab.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
-    
-    #searchBox { flex: 1; height: 46px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; outline: none; box-sizing: border-box; margin: 0; }
-    #sortSelect { width: 105px; height: 46px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--accent); font-size: 11px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center; }
-　　.scroll-content {
-  flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  /* このエリアより上は「表示領域外」になるので、曲が消えます */
-}
-    #songList { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; padding: 10px; }
-    .songBtn { background: rgba(30, 30, 30, 0.7); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; backdrop-filter: blur(5px); }
-    .btn-main { display: flex; flex-direction: column; flex: 1; text-align: left; overflow: hidden; }
-    .btn-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .btn-artist { font-size: 11px; color: #888; }
-    .btn-date { font-size: 12px; color: var(--accent); font-family: monospace; margin-left: 10px; white-space: nowrap; }
-    /* リスナー用メッセージボタンのスタイル */
-.msg-btn { 
-  background: transparent; 
-  color: var(--accent); 
-  border: 1px solid var(--accent); 
-  padding: 8px 10px; 
-  border-radius: 8px; 
-  font-size: 11px; 
-  font-weight: bold;
-  cursor: pointer; 
-  white-space: nowrap; 
+    #tabContainer { display: flex; overflow-x: auto; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; -webkit-overflow-scrolling: touch; }
+    .artist-tab { padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #888; flex-shrink: 0; }
+    .artist-tab.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
+    
+    #searchBox { flex: 1; height: 46px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 16px; outline: none; box-sizing: border-box; margin: 0; }
+    #sortSelect { width: 105px; height: 46px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--accent); font-size: 11px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center; }
+
+    #songList { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+    .songBtn { background: rgba(30, 30, 30, 0.7); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; backdrop-filter: blur(5px); }
+    .btn-main { display: flex; flex-direction: column; flex: 1; text-align: left; overflow: hidden; }
+    .btn-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-artist { font-size: 11px; color: #888; }
+    .btn-date { font-size: 12px; color: var(--accent); font-family: monospace; margin-left: 10px; white-space: nowrap; }
+    /* リスナー用メッセージボタンのスタイル */
+.msg-btn { 
+  background: transparent; 
+  color: var(--accent); 
+  border: 1px solid var(--accent); 
+  padding: 8px 10px; 
+  border-radius: 8px; 
+  font-size: 11px; 
+  font-weight: bold;
+  cursor: pointer; 
+  white-space: nowrap; 
 }
 
 /* メッセージ入力用モーダルの調整 */
 #msgModal textarea {
-  width: 100%; 
-  height: 150px; 
-  background: #1a1a1a; 
-  color: white; 
-  border: 1px solid #333; 
-  border-radius: 12px; 
-  padding: 15px; 
-  font-size: 16px; 
-  outline: none; 
-  box-sizing: border-box; 
-  resize: none;
+  width: 100%; 
+  height: 150px; 
+  background: #1a1a1a; 
+  color: white; 
+  border: 1px solid #333; 
+  border-radius: 12px; 
+  padding: 15px; 
+  font-size: 16px; 
+  outline: none; 
+  box-sizing: border-box; 
+  resize: none;
 }
-    .add-section { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #444; flex-shrink: 0; margin-top: 10px; }
-    .add-row { 
-  display: flex; 
-  gap: 8px; 
-  margin-bottom: 8px; 
-  width: 100%; 
-  /* box-sizingを徹底し、はみ出しを防止 */
-  box-sizing: border-box; 
+    .add-section { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #444; flex-shrink: 0; margin-top: 10px; }
+    .add-row { 
+  display: flex; 
+  gap: 8px; 
+  margin-bottom: 8px; 
+  width: 100%; 
+  /* box-sizingを徹底し、はみ出しを防止 */
+  box-sizing: border-box; 
 }
 
-.add-row input { 
-  /* flex-grow: 1 で余白を均等に埋め、min-width: 0 で縮小を許可 */
-  flex: 1; 
-  min-width: 0; 
-  padding: 10px; 
-  border-radius: 5px; 
-  border: 1px solid #444; 
-  background: #000; 
-  color: white; 
-  font-size: 13px; 
-  /* 枠線やパディングでサイズが変わらないように固定 */
-  box-sizing: border-box; 
+.add-row input { 
+  /* flex-grow: 1 で余白を均等に埋め、min-width: 0 で縮小を許可 */
+  flex: 1; 
+  min-width: 0; 
+  padding: 10px; 
+  border-radius: 5px; 
+  border: 1px solid #444; 
+  background: #000; 
+  color: white; 
+  font-size: 13px; 
+  /* 枠線やパディングでサイズが変わらないように固定 */
+  box-sizing: border-box; 
 }
-    .add-row select { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; width: 100px; box-sizing: border-box; }
-    .add-btn { width: 100%; padding: 12px; border-radius: 5px; background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; }
-    
-    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: none; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
-    
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent); }
-    .modal-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .request-item { display: flex; align-items: center; background: #252525; padding: 12px; border-radius: 10px; border: 1px solid #333; gap: 10px; }
-    .del-btn { background: var(--error); color: white; border: none; border-radius: 5px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
-    .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
-    .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); }
-    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
-    /* ❌ 消す or 修正 */
+    .add-row select { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #000; color: white; font-size: 13px; width: 100px; box-sizing: border-box; }
+    .add-btn { width: 100%; padding: 12px; border-radius: 5px; background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; }
+    
+    #resultArea { width: 100%; height: 130px; background: #000; color: #0f0; border: none; padding: 15px; font-family: monospace; border-radius: 10px; margin: 10px 0; resize: none; box-sizing: border-box; }
+    
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent); }
+    .modal-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .request-item { display: flex; align-items: center; background: #252525; padding: 12px; border-radius: 10px; border: 1px solid #333; gap: 10px; }
+    .del-btn { background: var(--error); color: white; border: none; border-radius: 5px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
+    .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
+    .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); }
+    #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
+    /* ❌ 消す or 修正 */
 #songList {
-  max-height: none;
-  overflow-y: visible;
+  max-height: none;
+  overflow-y: visible;
 }
 
 /* モーダル専用だけ制限する */
 #modalSongList, #messageList {
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
 }
 
 /* スクロールバーを細くしてデザインを崩さない */
 /* 名前を「#songList」から「#modalSongList」に変えるのがポイント！ */
 #modalSongList::-webkit-scrollbar, #messageList::-webkit-scrollbar {
-  width: 4px;
+  width: 4px;
 }
 #modalSongList::-webkit-scrollbar-thumb, #messageList::-webkit-scrollbar-thumb {
-  background: var(--accent); /* 色をアクセントカラーにするとカッコいいです */
-  border-radius: 10px;
+  background: var(--accent); /* 色をアクセントカラーにするとカッコいいです */
+  border-radius: 10px;
 }
 
 /* トップページのメインリスト用（こっちはそのままでOK） */
 #songList::-webkit-scrollbar {
-  width: 4px;
+  width: 4px;
 }
 #songList::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 10px;
+  background: #333;
+  border-radius: 10px;
 }
-    /* タブと検索エリアをまとめるコンテナを固定する */
-/* 固定バー全体の設定 */
-.sticky-controls {
-  flex-shrink: 0;
-  z-index: 100;
-  background: transparent; 
-  padding: 10px 10px 0 10px; /* 下以外の余白 */
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* 【ここが重要】アーティストタブの設定 */
-#tabContainer {
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 10px;
-  margin-left: -10px;
-  margin-right: -10px;
-  border-bottom: 1px solid var(--border);
-  -webkit-overflow-scrolling: touch;
-}
-
-/* 検索窓などはそのままでOK（親のpadding 10pxが効いてちょうど良い位置にくる） */
-
-/* ページ全体のスクロール設定を確認 */
-.page {
-  padding: 0 10px;
-  overflow-y: auto; /* ここでスクロールさせる */
-}
-  </style>
+  </style>
 </head>
 <body>
 
-  <div id="loadingOverlay">読み込み中...</div>
+  <div id="loadingOverlay">読み込み中...</div>
 
-  <div class="header-fixed">
-    <div class="header-row">
-      <div id="timerDisplay">00:00</div>
-      
-      <div class="title-group" id="titleContainer">
-        <div id="guestTitle">HanamiYa</div>
-        <div class="sub-desc" id="guestDesc">曲をタップするとリクエストできます</div>
-      </div>
+  <div class="header-fixed">
+    <div class="header-row">
+      <div id="timerDisplay">00:00</div>
+      
+      <div class="title-group" id="titleContainer">
+        <div id="guestTitle">HanamiYa</div>
+        <div class="sub-desc" id="guestDesc">曲をタップするとリクエストできます</div>
+      </div>
 
-      <div style="display:flex; gap:10px; align-items:center;">
-        <div class="admin-only" id="adminControls" style="gap:10px; align-items:center; display:none;">
-          <button id="requestBtn" onclick="openRequestModal()" style="background:#333; border:none; border-radius:50%; width:40px; height:40px; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer;">📩<span id="requestBadge" style="position:absolute; top:-5px; right:-5px; background:var(--error); color:white; border-radius:50%; padding:2px 6px; font-size:10px; display:none;">0</span></button>
-          <button id="actionBtn" onclick="handleAction()"> START</button>
-        </div>
-        <button class="msg-btn" id="guestMsgBtn" onclick="openMsgModal()">✉️ メッセージ</button>
-        <button id="loginBtn" onclick="tryLogin()">LogIn</button>
-      </div>
-    </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="admin-only" id="adminControls" style="gap:10px; align-items:center; display:none;">
+          <button id="requestBtn" onclick="openRequestModal()" style="background:#333; border:none; border-radius:50%; width:40px; height:40px; position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer;">📩<span id="requestBadge" style="position:absolute; top:-5px; right:-5px; background:var(--error); color:white; border-radius:50%; padding:2px 6px; font-size:10px; display:none;">0</span></button>
+          <button id="actionBtn" onclick="handleAction()"> START</button>
+        </div>
+        <button class="msg-btn" id="guestMsgBtn" onclick="openMsgModal()">✉️ メッセージ</button>
+        <button id="loginBtn" onclick="tryLogin()">LogIn</button>
+      </div>
+    </div>
 
-    <div id="adminTabNav" class="view-selector admin-only">
-      <div id="nav-music" class="view-tab active" onclick="switchView('music')"> 曲選択</div>
-      <div id="nav-log" class="view-tab" onclick="switchView('log')"> 記録/追加</div>
-    </div>
-  </div>
+    <div id="adminTabNav" class="view-selector admin-only">
+      <div id="nav-music" class="view-tab active" onclick="switchView('music')"> 曲選択</div>
+      <div id="nav-log" class="view-tab" onclick="switchView('log')"> 記録/追加</div>
+    </div>
+  </div>
 
-  <div class="content-area">
-    <div id="page-music" class="page active">
-  <!-- 固定部分 -->
-  <div class="sticky-controls">
-    <div id="tabContainer">
-      <!-- ここにアーティストタブが生成される -->
-    </div>
-    <div style="display: flex; gap: 8px; margin: 10px 0; height: 46px;">
-      <input type="text" id="searchBox" placeholder="曲名・アーティスト名で検索..." oninput="filterSongs()">
-      <select id="sortSelect" onchange="sortSongs()">
-        <option value="artist">アーティスト順</option>
-        <option value="newest">新しい順</option>
-        <option value="oldest">古い順</option>
-      </select>
-    </div>
-  </div>
+  <div class="content-area">
+    <div id="page-music" class="page active">
+      <div id="tabContainer">読み込み中...</div>
+      
+      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0; height: 46px;">
+        <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()">
+        <select id="sortSelect" onchange="filterSongs()">
+          <option value="artist">アーティスト順</option>
+          <option value="name">曲名順</option>
+          <option value="date">直近歌った順</option>
+        </select>
+      </div>
 
-  <!-- スクロール部分：ここを追加！ -->
-  <div class="scroll-content">
-    <div id="songList">
-      <!-- ここに曲ボタンが生成される -->
-    </div>
-  </div>
-</div>
+      <div id="songList"></div>
+    </div>
 
-      <div id="songList"></div>
-    </div>
+    <div id="page-log" class="page">
+      <div id="randomSelectionArea" style="display:none; background: rgba(98, 0, 238, 0.15); padding: 10px; border-radius: 12px; border: 1px dashed #6200ee; margin: 10px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <strong style="color:#bb86fc; font-size:12px;"> 本日の20選</strong>
+          <button onclick="document.getElementById('randomSelectionArea').style.display='none'" style="background:none; border:none; color:#888; font-size:16px;">×</button>
+        </div>
+        <div id="randomList" style="display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto;">
+        </div>
+      </div>
 
-    <div id="page-log" class="page">
-      <div id="randomSelectionArea" style="display:none; background: rgba(98, 0, 238, 0.15); padding: 10px; border-radius: 12px; border: 1px dashed #6200ee; margin: 10px 0;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-          <strong style="color:#bb86fc; font-size:12px;"> 本日の20選</strong>
-          <button onclick="document.getElementById('randomSelectionArea').style.display='none'" style="background:none; border:none; color:#888; font-size:16px;">×</button>
-        </div>
-        <div id="randomList" style="display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto;">
-        </div>
-      </div>
+      <div class="add-section">
+        <div style="font-size:11px; color:var(--primary); margin-bottom:6px; font-weight:bold;">▼ 新曲をNotionへ追加</div>
+        <div class="add-row">
+          <input type="text" id="newSong" placeholder="曲名">
+          <input type="text" id="newArtist" placeholder="アーティスト">
+        </div>
+        <div class="add-row">
+          <select id="newStatus">
+            <option value="フル">フル</option>
+            <option value="ワンコーラス">ワンコーラス</option>
+            <option value="２番まで">２番まで</option>
+          </select>
+          <button class="add-btn" onclick="addNewSong()">Notionに追加</button>
+        </div>
+      </div>
 
-      <div class="add-section">
-        <div style="font-size:11px; color:var(--primary); margin-bottom:6px; font-weight:bold;">▼ 新曲をNotionへ追加</div>
-        <div class="add-row">
-          <input type="text" id="newSong" placeholder="曲名">
-          <input type="text" id="newArtist" placeholder="アーティスト">
-        </div>
-        <div class="add-row">
-          <select id="newStatus">
-            <option value="フル">フル</option>
-            <option value="ワンコーラス">ワンコーラス</option>
-            <option value="２番まで">２番まで</option>
-          </select>
-          <button class="add-btn" onclick="addNewSong()">Notionに追加</button>
-        </div>
-      </div>
+      <textarea id="resultArea" readonly placeholder="ここにログが溜まります"></textarea>
 
-      <textarea id="resultArea" readonly placeholder="ここにログが溜まります"></textarea>
+      <div style="display:flex; gap:10px; margin-bottom:15px; flex-shrink:0;">
+        <button onclick="copyLog()" style="flex:1; padding:12px; border-radius:10px; background:var(--accent); border:none; font-weight:bold; color:black;">📋 コピー</button>
+        <button onclick="generateRandom20()" style="flex:1; padding:12px; border-radius:10px; background:#6200ee; border:none; color:white; font-weight:bold;">🎲 20選</button>
+        <button onclick="fetchData(true)" style="flex:0.7; padding:12px; border-radius:10px; background:#444; border:none; color:white;">🔄 同期</button>
+        <button onclick="logout()" style="padding:12px; border-radius:10px; background:var(--error); border:none; color:white;">↳</button>
+      </div>
+    </div>
+  </div>
 
-      <div style="display:flex; gap:10px; margin-bottom:15px; flex-shrink:0;">
-        <button onclick="copyLog()" style="flex:1; padding:12px; border-radius:10px; background:var(--accent); border:none; font-weight:bold; color:black;">📋 コピー</button>
-        <button onclick="generateRandom20()" style="flex:1; padding:12px; border-radius:10px; background:#6200ee; border:none; color:white; font-weight:bold;">🎲 20選</button>
-        <button onclick="fetchData(true)" style="flex:0.7; padding:12px; border-radius:10px; background:#444; border:none; color:white;">🔄 同期</button>
-        <button onclick="logout()" style="padding:12px; border-radius:10px; background:var(--error); border:none; color:white;">↳</button>
-      </div>
-    </div>
-  </div>
+  <div id="requestModal" class="modal">
+    <div class="modal-header">
+      <h3>📥 リクエスト・メッセージ</h3>
+      <button onclick="closeRequestModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
+    </div>
+    <div class="modal-content" style="display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">リクエスト</h4>
+        <div id="modalSongList"></div> </div>
+      <div>
+        <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">メッセージ</h4>
+        <div id="messageList"></div>
+      </div>
+    </div>
+  </div>
 
-  <div id="requestModal" class="modal">
-    <div class="modal-header">
-      <h3>📥 リクエスト・メッセージ</h3>
-      <button onclick="closeRequestModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
-    </div>
-    <div class="modal-content" style="display: flex; flex-direction: column; gap: 20px;">
-      <div>
-        <h4 style="color: var(--accent); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">リクエスト</h4>
-        <div id="modalSongList"></div> </div>
-      <div>
-        <h4 style="color: var(--primary); font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #333;">メッセージ</h4>
-        <div id="messageList"></div>
-      </div>
-    </div>
-  </div>
+  <div id="confirmOverlay" class="confirm-overlay">
+    <div class="confirm-card">
+      <h3 id="confirmTitle" style="color:var(--accent);"></h3>
+      <p>この曲を歌いますか？</p>
+      <div style="display:flex; gap:12px; margin-top:25px;">
+        <button onclick="closeConfirm()" style="flex:1; padding:15px; background:#444; color:white; border-radius:10px; border:none;">やめる</button>
+        <button id="execSingBtn" style="flex:1; padding:15px; background:var(--primary); color:black; font-weight:bold; border-radius:10px; border:none;">歌う！</button>
+      </div>
+    </div>
+  </div>
 
-  <div id="confirmOverlay" class="confirm-overlay">
-    <div class="confirm-card">
-      <h3 id="confirmTitle" style="color:var(--accent);"></h3>
-      <p>この曲を歌いますか？</p>
-      <div style="display:flex; gap:12px; margin-top:25px;">
-        <button onclick="closeConfirm()" style="flex:1; padding:15px; background:#444; color:white; border-radius:10px; border:none;">やめる</button>
-        <button id="execSingBtn" style="flex:1; padding:15px; background:var(--primary); color:black; font-weight:bold; border-radius:10px; border:none;">歌う！</button>
-      </div>
-    </div>
-  </div>
+  <div id="msgModal" class="modal">
+    <div class="modal-header">
+      <h3>✉️ MESSAGE</h3>
+      <button onclick="closeMsgModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
+    </div>
+    <div class="modal-content">
+      <p style="font-size:12px; color:#888;">花宮へのメッセージを送れます。</p>
+      <textarea id="chatInput" placeholder="メッセージを入力してください..."></textarea>
+      <button onclick="sendChatMessage()" style="width:100%; padding:15px; background:var(--accent); color:black; font-weight:bold; border-radius:12px; border:none; margin-top:15px; font-size:16px;">送信する</button>
+    </div>
+  </div>
 
-  <div id="msgModal" class="modal">
-    <div class="modal-header">
-      <h3>✉️ MESSAGE</h3>
-      <button onclick="closeMsgModal()" style="background:none; border:none; color:#888; font-size:28px;">×</button>
-    </div>
-    <div class="modal-content">
-      <p style="font-size:12px; color:#888;">花宮へのメッセージを送れます。</p>
-      <textarea id="chatInput" placeholder="メッセージを入力してください..."></textarea>
-      <button onclick="sendChatMessage()" style="width:100%; padding:15px; background:var(--accent); color:black; font-weight:bold; border-radius:12px; border:none; margin-top:15px; font-size:16px;">送信する</button>
-    </div>
-  </div>
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxZ3tWsNEBIwv0-wHPRhBqzFzaeDjrQdMdP8r8p3SBQOjmpJNHa3ZUmnRfzBhgbDunzPA/exec";
+    let IS_ADMIN = false;
+    const ADMIN_PASS = "0310"; 
+    let startTime = null, isRunning = false, allSongs = [], currentRequests = [], currentTab = "すべて";
+    const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元貴"];
 
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxZ3tWsNEBIwv0-wHPRhBqzFzaeDjrQdMdP8r8p3SBQOjmpJNHa3ZUmnRfzBhgbDunzPA/exec";
-    let IS_ADMIN = false;
-    const ADMIN_PASS = "0310"; 
-    let startTime = null, isRunning = false, allSongs = [], currentRequests = [], currentTab = "すべて";
-    const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元貴"];
+    async function callGAS(params, showLoading = false) {
+      if (showLoading) document.getElementById('loadingOverlay').style.display = 'flex';
+      const queryString = new URLSearchParams(params).toString();
+      try {
+        const response = await fetch(`${GAS_URL}?${queryString}`);
+        return await response.json();
+      } catch (e) { console.error("GAS通信エラー:", e); }
+      finally { if (showLoading) document.getElementById('loadingOverlay').style.display = 'none'; }
+    }
 
-    async function callGAS(params, showLoading = false) {
-      if (showLoading) document.getElementById('loadingOverlay').style.display = 'flex';
-      const queryString = new URLSearchParams(params).toString();
-      try {
-        const response = await fetch(`${GAS_URL}?${queryString}`);
-        return await response.json();
-      } catch (e) { console.error("GAS通信エラー:", e); }
-      finally { if (showLoading) document.getElementById('loadingOverlay').style.display = 'none'; }
-    }
+    window.onload = async () => {
+      const loggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+      applyAdminMode(loggedIn);
+      if (loggedIn) syncWithServer();
+      fetchData(true);
+    };
 
-    window.onload = async () => {
-      const loggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
-      applyAdminMode(loggedIn);
-      if (loggedIn) syncWithServer();
-      fetchData(true);
-    };
+    function generateRandom20() {
+      if (allSongs.length === 0) return alert("曲リストが空です。同期してください。");
+      let shuffled = [...allSongs].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 20);
+      const container = document.getElementById('randomList');
+      const area = document.getElementById('randomSelectionArea');
+      container.innerHTML = '';
+      area.style.display = 'block';
+      selected.forEach(s => {
+        const row = document.createElement('div');
+        row.style = "display:flex; gap:10px; align-items:center; background:var(--card); padding:10px; border-radius:8px; border:1px solid #333;";
+        const info = document.createElement('div');
+        info.style = "flex:1; cursor:pointer;";
+        info.innerHTML = `<span style="font-size:13px; font-weight:bold;">${s.name}</span><br><small style="color:#888;">${s.artist}</small>`;
+        info.onclick = () => onSongTap(s);
+        const delBtn = document.createElement('button');
+        delBtn.innerText = "×";
+        delBtn.style = "background:none; border:none; color:var(--error); font-size:18px; padding:0 10px; cursor:pointer;";
+        delBtn.onclick = () => row.remove();
+        row.appendChild(info);
+        row.appendChild(delBtn);
+        container.appendChild(row);
+      });
+      area.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    async function syncWithServer() {
+      if (!IS_ADMIN) return;
+      const res = await callGAS({ action: 'checkExternalStart' });
+      if (res && res.startTime) {
+        const serverTime = parseInt(res.startTime);
+        if (!isRunning || Math.abs(startTime - serverTime) > 1000) {
+          startTime = serverTime;
+          isRunning = true;
+          updateButtonUI(true);
+        }
+      } else if (isRunning) {
+        isRunning = false;
+        updateButtonUI(false);
+      }
+    }
 
-    function generateRandom20() {
-      if (allSongs.length === 0) return alert("曲リストが空です。同期してください。");
-      let shuffled = [...allSongs].sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 20);
-      const container = document.getElementById('randomList');
-      const area = document.getElementById('randomSelectionArea');
-      container.innerHTML = '';
-      area.style.display = 'block';
-      selected.forEach(s => {
-        const row = document.createElement('div');
-        row.style = "display:flex; gap:10px; align-items:center; background:var(--card); padding:10px; border-radius:8px; border:1px solid #333;";
-        const info = document.createElement('div');
-        info.style = "flex:1; cursor:pointer;";
-        info.innerHTML = `<span style="font-size:13px; font-weight:bold;">${s.name}</span><br><small style="color:#888;">${s.artist}</small>`;
-        info.onclick = () => onSongTap(s);
-        const delBtn = document.createElement('button');
-        delBtn.innerText = "×";
-        delBtn.style = "background:none; border:none; color:var(--error); font-size:18px; padding:0 10px; cursor:pointer;";
-        delBtn.onclick = () => row.remove();
-        row.appendChild(info);
-        row.appendChild(delBtn);
-        container.appendChild(row);
-      });
-      area.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    async function syncWithServer() {
-      if (!IS_ADMIN) return;
-      const res = await callGAS({ action: 'checkExternalStart' });
-      if (res && res.startTime) {
-        const serverTime = parseInt(res.startTime);
-        if (!isRunning || Math.abs(startTime - serverTime) > 1000) {
-          startTime = serverTime;
-          isRunning = true;
-          updateButtonUI(true);
-        }
-      } else if (isRunning) {
-        isRunning = false;
-        updateButtonUI(false);
-      }
-    }
+    async function fetchData(showUI = false) {
+      const songs = await callGAS({ action: "getSongs" }, showUI);
+      if (songs) { allSongs = songs; renderAll(); }
+    }
 
-    async function fetchData(showUI = false) {
-      const songs = await callGAS({ action: "getSongs" }, showUI);
-      if (songs) { allSongs = songs; renderAll(); }
-    }
+    function renderAll() {
+      const counts = {};
+      let ohmoriTotal = 0;
+      allSongs.forEach(s => {
+        if (OHMORI_GROUP.includes(s.artist)) ohmoriTotal++;
+        else counts[s.artist] = (counts[s.artist] || 0) + 1;
+      });
+      const majorArtists = Object.keys(counts).filter(a => counts[a] >= 10).sort();
+      const tabs = [{ id: "すべて", label: `すべて (${allSongs.length})` }];
+      if (ohmoriTotal > 0) tabs.push({ id: "大森元貴曲", label: `大森元貴曲 (${ohmoriTotal})` });
+      majorArtists.forEach(name => tabs.push({ id: name, label: `${name} (${counts[name]})` }));
+      const container = document.getElementById('tabContainer');
+      container.innerHTML = '';
+      tabs.forEach(tab => {
+        const div = document.createElement('div');
+        div.className = `artist-tab ${tab.id === currentTab ? 'active' : ''}`;
+        div.innerText = tab.label;
+        div.onclick = () => { currentTab = tab.id; renderAll(); };
+        container.appendChild(div);
+      });
+      filterSongs();
+    }
 
-    function renderAll() {
-      const counts = {};
-      let ohmoriTotal = 0;
-      allSongs.forEach(s => {
-        if (OHMORI_GROUP.includes(s.artist)) ohmoriTotal++;
-        else counts[s.artist] = (counts[s.artist] || 0) + 1;
-      });
-      const majorArtists = Object.keys(counts).filter(a => counts[a] >= 10).sort();
-      const tabs = [{ id: "すべて", label: `すべて (${allSongs.length})` }];
-      if (ohmoriTotal > 0) tabs.push({ id: "大森元貴曲", label: `大森元貴曲 (${ohmoriTotal})` });
-      majorArtists.forEach(name => tabs.push({ id: name, label: `${name} (${counts[name]})` }));
-      const container = document.getElementById('tabContainer');
-      container.innerHTML = '';
-      tabs.forEach(tab => {
-        const div = document.createElement('div');
-        div.className = `artist-tab ${tab.id === currentTab ? 'active' : ''}`;
-        div.innerText = tab.label;
-        div.onclick = () => { currentTab = tab.id; renderAll(); };
-        container.appendChild(div);
-      });
-      filterSongs();
-    }
+    function filterSongs() {
+      const query = document.getElementById('searchBox')?.value.toLowerCase() || "";
+      const sortType = document.getElementById('sortSelect')?.value || "artist";
+      const container = document.getElementById('songList');
+      container.innerHTML = '';
+      let f = [...allSongs];
+      if (currentTab === "大森元貴曲") f = f.filter(s => OHMORI_GROUP.includes(s.artist));
+      else if (currentTab !== "すべて") f = f.filter(s => s.artist === currentTab);
+      if (query) f = f.filter(s => s.name.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query));
+      f.sort((a, b) => {
+        if (sortType === "name") return a.name.localeCompare(b.name, 'ja');
+        if (sortType === "date") {
+          const dateA = new Date(a.lastSung || "1900-01-01");
+          const dateB = new Date(b.lastSung || "1900-01-01");
+          return dateB - dateA;
+        }
+        return a.artist.localeCompare(b.artist, 'ja');
+      });
+      f.forEach(s => {
+        const btn = document.createElement('button');
+        btn.className = 'songBtn';
+        btn.onclick = () => onSongTap(s);
+        const dateStr = (s.lastSung && s.lastSung !== "1900-01-01") ? s.lastSung : "";
+        btn.innerHTML = `<div class="btn-main"><span class="btn-title">${s.name}</span><span class="btn-artist">${s.artist}</span></div><span class="btn-date" style="font-size:10px; color:var(--accent); font-family:monospace;">${dateStr}</span>`;
+        container.appendChild(btn);
+      });
+    }
 
-    function filterSongs() {
-      const query = document.getElementById('searchBox')?.value.toLowerCase() || "";
-      const sortType = document.getElementById('sortSelect')?.value || "artist";
-      const container = document.getElementById('songList');
-      container.innerHTML = '';
-      let f = [...allSongs];
-      if (currentTab === "大森元貴曲") f = f.filter(s => OHMORI_GROUP.includes(s.artist));
-      else if (currentTab !== "すべて") f = f.filter(s => s.artist === currentTab);
-      if (query) f = f.filter(s => s.name.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query));
-      f.sort((a, b) => {
-        if (sortType === "name") return a.name.localeCompare(b.name, 'ja');
-        if (sortType === "date") {
-          const dateA = new Date(a.lastSung || "1900-01-01");
-          const dateB = new Date(b.lastSung || "1900-01-01");
-          return dateB - dateA;
-        }
-        return a.artist.localeCompare(b.artist, 'ja');
-      });
-      f.forEach(s => {
-        const btn = document.createElement('button');
-        btn.className = 'songBtn';
-        btn.onclick = () => onSongTap(s);
-        const dateStr = (s.lastSung && s.lastSung !== "1900-01-01") ? s.lastSung : "";
-        btn.innerHTML = `<div class="btn-main"><span class="btn-title">${s.name}</span><span class="btn-artist">${s.artist}</span></div><span class="btn-date" style="font-size:10px; color:var(--accent); font-family:monospace;">${dateStr}</span>`;
-        container.appendChild(btn);
-      });
-    }
+    function onSongTap(song, isFromRequest = false, requestId = null) {
+      if (IS_ADMIN) showAdminMenu(song, isFromRequest, requestId);
+      else {
+        if (confirm(`「${song.name}」をリクエストしますか？`)) {
+          callGAS({ action: "sendRequest", name: song.name, artist: song.artist }, true).then(() => alert("送信しました！"));
+        }
+      }
+    }
 
-    function onSongTap(song, isFromRequest = false, requestId = null) {
-      if (IS_ADMIN) showAdminMenu(song, isFromRequest, requestId);
-      else {
-        if (confirm(`「${song.name}」をリクエストしますか？`)) {
-          callGAS({ action: "sendRequest", name: song.name, artist: song.artist }, true).then(() => alert("送信しました！"));
-        }
-      }
-    }
+    function showAdminMenu(song, isFromRequest, requestId) {
+      const titleEl = document.getElementById('confirmTitle');
+      titleEl.innerText = song.name;
+      const oldLinks = document.getElementById('adminLinkGroup');
+      if (oldLinks) oldLinks.remove();
+      const linkGroup = document.createElement('div');
+      linkGroup.id = 'adminLinkGroup';
+      linkGroup.style = "display:flex; flex-direction:column; gap:10px; margin-bottom:20px;";
+      const links = [{ label: " U-FRET", url: song.ufret }, { label: " Chordwiki", url: song.chordwiki }, { label: " リンネのコードブック", url: song.linne }];
+      let hasLink = false;
+      links.forEach(link => {
+        if (link.url && link.url.trim() !== "") {
+          const a = document.createElement('a');
+          a.href = link.url; a.target = "_blank"; a.innerText = link.label;
+          a.style = "display:block; padding:12px; background:#333; color:var(--primary); text-decoration:none; border-radius:10px; font-size:13px; font-weight:bold; border:1px solid #444;";
+          linkGroup.appendChild(a);
+          hasLink = true;
+        }
+      });
+      if (hasLink) titleEl.after(linkGroup);
+      document.getElementById('execSingBtn').onclick = async () => {
+        if (!isRunning) return alert("STARTを押してください");
+        executeSing(song);
+        if (isFromRequest && requestId) callGAS({ action: "deleteRequest", id: requestId });
+        closeConfirm();
+        if (isFromRequest) closeRequestModal();
+      };
+      document.getElementById('confirmOverlay').style.display = 'flex';
+    }
 
-    function showAdminMenu(song, isFromRequest, requestId) {
-      const titleEl = document.getElementById('confirmTitle');
-      titleEl.innerText = song.name;
-      const oldLinks = document.getElementById('adminLinkGroup');
-      if (oldLinks) oldLinks.remove();
-      const linkGroup = document.createElement('div');
-      linkGroup.id = 'adminLinkGroup';
-      linkGroup.style = "display:flex; flex-direction:column; gap:10px; margin-bottom:20px;";
-      const links = [{ label: " U-FRET", url: song.ufret }, { label: " Chordwiki", url: song.chordwiki }, { label: " リンネのコードブック", url: song.linne }];
-      let hasLink = false;
-      links.forEach(link => {
-        if (link.url && link.url.trim() !== "") {
-          const a = document.createElement('a');
-          a.href = link.url; a.target = "_blank"; a.innerText = link.label;
-          a.style = "display:block; padding:12px; background:#333; color:var(--primary); text-decoration:none; border-radius:10px; font-size:13px; font-weight:bold; border:1px solid #444;";
-          linkGroup.appendChild(a);
-          hasLink = true;
-        }
-      });
-      if (hasLink) titleEl.after(linkGroup);
-      document.getElementById('execSingBtn').onclick = async () => {
-        if (!isRunning) return alert("STARTを押してください");
-        executeSing(song);
-        if (isFromRequest && requestId) callGAS({ action: "deleteRequest", id: requestId });
-        closeConfirm();
-        if (isFromRequest) closeRequestModal();
-      };
-      document.getElementById('confirmOverlay').style.display = 'flex';
-    }
+    async function handleAction() {
+      if (!isRunning) {
+        const res = await callGAS({ action: 'startFromExternal' });
+        if (res && res.startTime) {
+          startTime = parseInt(res.startTime);
+          isRunning = true;
+          updateButtonUI(true);
+        }
+      } else {
+        if (confirm("配信を終了しますか？")) {
+          isRunning = false;
+          updateButtonUI(false);
+          await callGAS({ action: 'clearExternalStart' });
+          localStorage.removeItem('setlist_backup');
+          document.getElementById('resultArea').value = ""; // 画面上も空にする
+          // --------------------------------------------
+        }
+      }
+    }
 
-    async function handleAction() {
-      if (!isRunning) {
-        const res = await callGAS({ action: 'startFromExternal' });
-        if (res && res.startTime) {
-          startTime = parseInt(res.startTime);
-          isRunning = true;
-          updateButtonUI(true);
-        }
-      } else {
-        if (confirm("配信を終了しますか？")) {
-          isRunning = false;
-          updateButtonUI(false);
-          await callGAS({ action: 'clearExternalStart' });
-          localStorage.removeItem('setlist_backup');
-          document.getElementById('resultArea').value = ""; // 画面上も空にする
-          // --------------------------------------------
-        }
-      }
-    }
+    function updateButtonUI(active) {
+      const btn = document.getElementById('actionBtn');
+      if (btn) {
+        btn.innerText = active ? "🛑 STOP" : "🎥 START";
+        btn.classList.toggle('active', active);
+      }
+    }
 
-    function updateButtonUI(active) {
-      const btn = document.getElementById('actionBtn');
-      if (btn) {
-        btn.innerText = active ? "🛑 STOP" : "🎥 START";
-        btn.classList.toggle('active', active);
-      }
-    }
-
-    // ログが更新されるたびに保存する処理（例）
+    // ログが更新されるたびに保存する処理（例）
 function executeSing(song) {
-  const timeStr = document.getElementById('timerDisplay').innerText;
-  const logLine = `${timeStr} ${song.name}\n`;
-  const area = document.getElementById('resultArea');
-  
-  area.value += logLine;
-  // ブラウザに一時保存
-  localStorage.setItem('setlist_backup', area.value);
-  
-  if (song.id) callGAS({ action: "updateDate", id: song.id });
+  const timeStr = document.getElementById('timerDisplay').innerText;
+  const logLine = `${timeStr} ${song.name}\n`;
+  const area = document.getElementById('resultArea');
+  
+  area.value += logLine;
+  // ブラウザに一時保存
+  localStorage.setItem('setlist_backup', area.value);
+  
+  if (song.id) callGAS({ action: "updateDate", id: song.id });
 }
 
 // ページ読み込み時に復活させる処理（修正版）
 window.addEventListener('load', () => {
-  const backup = localStorage.getItem('setlist_backup');
-  // タイマーが動いている（isRunningがtrue）かつバックアップがある場合のみ表示
-  // ※サーバー同期を待つ必要があるため、setTimeoutで少し遅らせるか、
-  // syncWithServerの結果を待ってから判定するのが確実です。
-  if (backup) {
-    document.getElementById('resultArea').value = backup;
-  }
+  const backup = localStorage.getItem('setlist_backup');
+  // タイマーが動いている（isRunningがtrue）かつバックアップがある場合のみ表示
+  // ※サーバー同期を待つ必要があるため、setTimeoutで少し遅らせるか、
+  // syncWithServerの結果を待ってから判定するのが確実です。
+  if (backup) {
+    document.getElementById('resultArea').value = backup;
+  }
 });
 
-    function applyAdminMode(isAdmin) {
-      IS_ADMIN = isAdmin;
-      localStorage.setItem('isAdminLoggedIn', isAdmin);
-      document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
-      document.getElementById('titleContainer').style.display = isAdmin ? 'none' : 'flex';
-      document.getElementById('loginBtn').style.display = isAdmin ? 'none' : 'block';
-      document.getElementById('timerDisplay').style.display = isAdmin ? 'block' : 'none';
-      document.getElementById('guestMsgBtn').style.display = isAdmin ? 'none' : 'block';
-      if (isAdmin) setInterval(checkRequests, 3000);
-    }
+    function applyAdminMode(isAdmin) {
+      IS_ADMIN = isAdmin;
+      localStorage.setItem('isAdminLoggedIn', isAdmin);
+      document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
+      document.getElementById('titleContainer').style.display = isAdmin ? 'none' : 'flex';
+      document.getElementById('loginBtn').style.display = isAdmin ? 'none' : 'block';
+      document.getElementById('timerDisplay').style.display = isAdmin ? 'block' : 'none';
+      document.getElementById('guestMsgBtn').style.display = isAdmin ? 'none' : 'block';
+      if (isAdmin) setInterval(checkRequests, 3000);
+    }
 
-    // リスナーがメッセージを送る処理
+    // リスナーがメッセージを送る処理
 async function sendChatMessage() {
-  const msg = document.getElementById('chatInput').value;
-  if (!msg.trim()) return;
-  // artist名を固定の文字列にすることで、管理者側で判別できるようにします
-  await callGAS({ action: "sendRequest", name: msg, artist: "💬 MESSAGE" }, true);
-  document.getElementById('chatInput').value = "";
-  closeMsgModal();
-  alert("メッセージを送信しました！");
+  const msg = document.getElementById('chatInput').value;
+  if (!msg.trim()) return;
+  // artist名を固定の文字列にすることで、管理者側で判別できるようにします
+  await callGAS({ action: "sendRequest", name: msg, artist: "💬 MESSAGE" }, true);
+  document.getElementById('chatInput').value = "";
+  closeMsgModal();
+  alert("メッセージを送信しました！");
 }
 
 function openMsgModal() { document.getElementById('msgModal').style.display = 'flex'; }
 function closeMsgModal() { document.getElementById('msgModal').style.display = 'none'; }
-    
-    
-    
-    async function checkRequests() {
-      const reqs = await callGAS({ action: "getRequests" });
-      if (reqs) {
-        currentRequests = reqs;
-        const badge = document.getElementById('requestBadge');
-        if (badge) {
-          badge.innerText = reqs.length;
-          badge.style.display = reqs.length > 0 ? 'block' : 'none';
-        }
-      }
-    }
+    
+    
+    
+    async function checkRequests() {
+      const reqs = await callGAS({ action: "getRequests" });
+      if (reqs) {
+        currentRequests = reqs;
+        const badge = document.getElementById('requestBadge');
+        if (badge) {
+          badge.innerText = reqs.length;
+          badge.style.display = reqs.length > 0 ? 'block' : 'none';
+        }
+      }
+    }
 
-    function openRequestModal() {
-      const modal = document.getElementById('requestModal');
-      const songList = document.getElementById('modalSongList'); // ここが重要
-      const messageList = document.getElementById('messageList');
-      modal.style.display = 'flex';
-      songList.innerHTML = '';
-      messageList.innerHTML = '';
+    function openRequestModal() {
+      const modal = document.getElementById('requestModal');
+      const songList = document.getElementById('modalSongList'); // ここが重要
+      const messageList = document.getElementById('messageList');
+      modal.style.display = 'flex';
+      songList.innerHTML = '';
+      messageList.innerHTML = '';
 
-      if (currentRequests.length === 0) {
-        songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
-        messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
-        return;
-      }
+      if (currentRequests.length === 0) {
+        songList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
+        messageList.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">なし</div>';
+        return;
+      }
 
-      currentRequests.forEach(req => {
-        const isChat = req.artist === "💬 MESSAGE";
-        const div = document.createElement('div');
-        div.className = 'request-item';
-        div.innerHTML = `
-          <div style="flex:1">
-            <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">${isChat ? '✉️ ' : '♪ '}${req.name}</b><br>
-            <small style="color:#888;">${isChat ? '' : req.artist}</small>
-          </div>
-          <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
-        `;
-        if (isChat) { messageList.appendChild(div); } 
-        else {
-          div.style.cursor = 'pointer';
-          div.onclick = () => {
-            const fullSongData = allSongs.find(s => s.name.trim() === req.name.trim());
-            showAdminMenu(fullSongData || { name: req.name, artist: req.artist }, true, req.id);
-          };
-          songList.appendChild(div);
-        }
-      });
-    }
-    async function deleteReq(id) {
-      if (confirm("削除しますか？")) {
-        await callGAS({ action: "deleteRequest", id: id }, true);
-        checkRequests();
-        openRequestModal();
-      }
-    }
+      currentRequests.forEach(req => {
+        const isChat = req.artist === "💬 MESSAGE";
+        const div = document.createElement('div');
+        div.className = 'request-item';
+        div.innerHTML = `
+          <div style="flex:1">
+            <b style="color:${isChat ? 'var(--primary)' : 'var(--accent)'};">${isChat ? '✉️ ' : '♪ '}${req.name}</b><br>
+            <small style="color:#888;">${isChat ? '' : req.artist}</small>
+          </div>
+          <button class="del-btn" onclick="event.stopPropagation(); deleteReq('${req.id}')">削除</button>
+        `;
+        if (isChat) { messageList.appendChild(div); } 
+        else {
+          div.style.cursor = 'pointer';
+          div.onclick = () => {
+            const fullSongData = allSongs.find(s => s.name.trim() === req.name.trim());
+            showAdminMenu(fullSongData || { name: req.name, artist: req.artist }, true, req.id);
+          };
+          songList.appendChild(div);
+        }
+      });
+    }
+    async function deleteReq(id) {
+      if (confirm("削除しますか？")) {
+        await callGAS({ action: "deleteRequest", id: id }, true);
+        checkRequests();
+        openRequestModal();
+      }
+    }
 
-    async function addNewSong() {
-      const name = document.getElementById('newSong').value;
-      const artist = document.getElementById('newArtist').value;
-      const status = document.getElementById('newStatus').value;
-      if (!name || !artist) return alert("入力してください");
-      await callGAS({ action: "addSong", name, artist, status }, true);
-      alert("Notionに追加しました");
-      fetchData(false);
-    }
+    async function addNewSong() {
+      const name = document.getElementById('newSong').value;
+      const artist = document.getElementById('newArtist').value;
+      const status = document.getElementById('newStatus').value;
+      if (!name || !artist) return alert("入力してください");
+      await callGAS({ action: "addSong", name, artist, status }, true);
+      alert("Notionに追加しました");
+      fetchData(false);
+    }
 
-    function switchView(view) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('page-' + view).classList.add('active');
-      document.getElementById('nav-' + view).classList.add('active');
-    }
+    function switchView(view) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('page-' + view).classList.add('active');
+      document.getElementById('nav-' + view).classList.add('active');
+    }
 
-    setInterval(() => { if (IS_ADMIN) syncWithServer(); }, 3000);
-    // --- タイマー表示の修正版 ---
-    setInterval(() => {
-      if (isRunning && startTime) {
-        const diff = Math.max(0, Date.now() - startTime);
-        
-        const hours = Math.floor(diff / 3600000); // 1時間 = 3,600,000ミリ秒
-        const min = Math.floor((diff % 3600000) / 60000);
-        const sec = Math.floor((diff % 60000) / 1000);
-        
-        const display = document.getElementById('timerDisplay');
-        if (display) {
-          if (hours > 0) {
-            // 1時間以上の場合は H:MM:SS
-            display.innerText = `${hours}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-          } else {
-            // 1時間未満の場合は MM:SS
-            display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
-          }
-        }
-      }
-    }, 1000);
+    setInterval(() => { if (IS_ADMIN) syncWithServer(); }, 3000);
+    // --- タイマー表示の修正版 ---
+    setInterval(() => {
+      if (isRunning && startTime) {
+        const diff = Math.max(0, Date.now() - startTime);
+        
+        const hours = Math.floor(diff / 3600000); // 1時間 = 3,600,000ミリ秒
+        const min = Math.floor((diff % 3600000) / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+        
+        const display = document.getElementById('timerDisplay');
+        if (display) {
+          if (hours > 0) {
+            // 1時間以上の場合は H:MM:SS
+            display.innerText = `${hours}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+          } else {
+            // 1時間未満の場合は MM:SS
+            display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
+          }
+        }
+      }
+    }, 1000);
 
-    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
-    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
-    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; const oldLinks = document.getElementById('adminLinkGroup'); if (oldLinks) oldLinks.remove(); }
-    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
-    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
-  </script>
+    function tryLogin() { if (prompt("PASS?") === ADMIN_PASS) applyAdminMode(true); }
+    function logout() { localStorage.setItem('isAdminLoggedIn', 'false'); location.reload(); }
+    function closeConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; const oldLinks = document.getElementById('adminLinkGroup'); if (oldLinks) oldLinks.remove(); }
+    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
+    function copyLog() { navigator.clipboard.writeText(document.getElementById('resultArea').value); alert("コピーしました"); }
+  </script>
 </body>
 </html>
