@@ -19,27 +19,31 @@
     
     /* 追加：Safariのバウンス時（引っ張った時）に出る謎の白を黒で塗りつぶす */
     html {
-      background-color: var(--bg);
+      background-color: #121212;
       height: 100%;
     }
 
-    body { 
-      font-family: 'Segoe UI', 'Noto Sans JP', sans-serif; 
-      /* 背景指定を1つにまとめ、透過レイヤーを画像の上に重ねます */
-      background: 
-        linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
-        url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover; 
-      background-attachment: fixed;
-      margin: 0; padding: 0; 
-      display: flex; flex-direction: column; 
-      height: 100vh; /* min-heightより固定の方が安定します（古いブラウザ用） */
-      height: 100dvh; /* 追加：Safariの上下バーを考慮した完璧な全画面指定 */
-      box-sizing: border-box; 
-      overflow: hidden; 
-    }
+    body {
+  font-family: 'Segoe UI', 'Noto Sans JP', sans-serif;
+  margin: 0;
+  padding: 0;
+  
+  /* 背景を固定して画面全体に広げる */
+  background: 
+    linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
+    url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+
+  /* 画面の高さ指定 */
+  min-height: 100vh;
+  min-height: 100dvh; /* 動的ビューポート（これがスマホで効く） */
+  
+  display: flex;
+  flex-direction: column;
+}
 
     /* iPhoneノッチ対策: 完全に不透明な背景色を指定して網掛けを防止 */
     .header-fixed { 
