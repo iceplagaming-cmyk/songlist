@@ -202,6 +202,30 @@
   background: #333;
   border-radius: 10px;
 }
+    /* タブと検索エリアをまとめるコンテナを固定する */
+.sticky-controls {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg); /* 背景を透過させない */
+  padding-bottom: 5px;
+}
+
+/* 既存の tabContainer のボーダーを少し調整 */
+#tabContainer {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ページ全体のスクロール設定を確認 */
+.page {
+  padding: 0 10px;
+  overflow-y: auto; /* ここでスクロールさせる */
+}
   </style>
 </head>
 <body>
@@ -235,16 +259,19 @@
 
   <div class="content-area">
     <div id="page-music" class="page active">
-      <div id="tabContainer">読み込み中...</div>
-      
-      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0; height: 46px;">
-        <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()">
-        <select id="sortSelect" onchange="filterSongs()">
-          <option value="artist">アーティスト順</option>
-          <option value="name">曲名順</option>
-          <option value="date">直近歌った順</option>
-        </select>
-      </div>
+  <!-- ここから固定エリア -->
+  <div class="sticky-controls">
+    <div id="tabContainer">読み込み中...</div>
+    
+    <div style="display: flex; gap: 8px; margin: 10px 0; height: 46px;">
+      <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()">
+      <select id="sortSelect" onchange="filterSongs()">
+        <option value="artist">アーティスト順</option>
+        <option value="name">曲名順</option>
+        <option value="date">直近歌った順</option>
+      </select>
+    </div>
+  </div>
 
       <div id="songList"></div>
     </div>
