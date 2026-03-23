@@ -213,6 +213,23 @@
     const OHMORI_GROUP = ["Mrs. GREEN APPLE", "Siip", "大森元貴"];
 
     // ★ セキュリティ対応：管理者操作の場合はSessionStorageからパスワードを付与して通信
+
+    // 文字列を安全なものに変換する関数
+function sanitize(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/[&<>"']/g, function(m) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[m];
+  });
+}
+
+// リクエスト送信部分でこれを使う！
+const safeName = sanitize(document.getElementById('chatInput').value);
     async function callGAS(params, showLoading = false) {
       if (showLoading) document.getElementById('loadingOverlay').style.display = 'flex';
       
@@ -498,13 +515,24 @@
     }
 
     async function sendChatMessage() {
-      const msg = document.getElementById('chatInput').value;
-      if (!msg.trim()) return;
-      await callGAS({ action: "sendRequest", name: msg, artist: "💬 MESSAGE" }, true);
-      document.getElementById('chatInput').value = "";
-      closeMsgModal();
-      alert("メッセージを送信しました！");
-    }
+  const inputEl = document.getElementById('chatInput');
+  const rawMsg = inputEl.value;
+  if (!rawMsg.trim()) return;
+
+  // ここでサニタイズを実行！
+  const safeMsg = sanitize(rawMsg);
+
+  // 送信するのは「safeMsg」の方
+  await callGAS({ 
+    action: "sendRequest", 
+    name: safeMsg, // 安全な名前
+    artist: "💬 MESSAGE" 
+  }, true);
+
+  inputEl.value = "";
+  closeMsgModal();
+  alert("メッセージを送信しました！");
+}
 
     function openMsgModal() { document.getElementById('msgModal').style.display = 'flex'; }
     function closeMsgModal() { document.getElementById('msgModal').style.display = 'none'; }
