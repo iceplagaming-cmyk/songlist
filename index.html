@@ -211,15 +211,15 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 100%; /* 横幅いっぱい */
-  background: rgba(30, 30, 30, 0.7); 
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  
-  /* 中身が端に寄りすぎないように内側にだけ10px入れる */
-  padding: 5px 10px; 
-  box-sizing: border-box; /* これを入れないとpadding分だけ外にハミ出します */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* 背景を完全に透明にする（これで重なりが消えます） */
+  background: transparent; 
+  /* ぼかしも一旦消す（中身のボタンに付いているはずなので） */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  width: 100%;
+  padding: 5px 0;
+  margin: 0;
 }
 
 /* 【ここが重要】アーティストタブの設定 */
