@@ -2,14 +2,14 @@
 <html>
 <head>
   <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="HanamiYa">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HanamiYa">
 
-<link rel="apple-touch-icon" href="https://github.com/Hanamiya-Song/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true">
+  <link rel="apple-touch-icon" href="https://github.com/Hanamiya-Song/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>My Song List</title>
@@ -22,13 +22,13 @@
       color: var(--text); 
       margin: 0; padding: 0; 
       display: flex; flex-direction: column; 
-      min-height: 100vh; /* 前回の修正を復元：100dvhやheight:100vhから変更 */
+      min-height: 100vh; 
       box-sizing: border-box; 
       overflow: hidden; 
       background-image: url("https://github.com/iceplagaming-cmyk/songlist/blob/main/7808d4bc-bbc7-446e-85a7-ea2b581164bb.jpg?raw=true");
       background-repeat: no-repeat;
       background-position: center;
-      background-size: cover; /* 前回の修正を復元：PCでも綺麗に見えるように */
+      background-size: cover; 
       background-attachment: fixed;
     }
 
@@ -36,23 +36,22 @@
       content: "";
       position: fixed;
       top: 0; left: 0;
-      width: 100%; height: 100%; /* 前回の修正を復元：はみ出し防止 */
+      width: 100%; height: 100%; 
       background: rgba(18, 18, 18, 0.85); 
       z-index: -1;
       pointer-events: none;
     }
 
-    /* iPhoneノッチ対策 */
+    /* iPhoneノッチ対策: 完全に不透明な背景色を指定して網掛けを防止 */
     .header-fixed { 
       background: #1a1a1a; 
       padding: 10px 15px; 
       border-bottom: 1px solid var(--border); 
       flex-shrink: 0; 
       z-index: 100;
-      padding-top: calc(10px + env(safe-area-inset-top)); /* 少しスッキリさせました */
+      padding-top: calc(10px + env(safe-area-inset-top)); 
     }
 
-    /* ヘッダーの中身が狭い画面で潰れないように調整 */
     .header-row { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 5px; flex-wrap: wrap; }
     
     .title-group { display: flex; flex-direction: column; line-height: 1.2; flex: 1; min-width: 120px; }
@@ -81,7 +80,6 @@
     .view-tab { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; color: #888; }
     .view-tab.active { background: var(--card); color: var(--accent); }
     
-    /* 前回の修正を復元：PCで横に広がりすぎないように */
     .content-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; }
     .page { 
       position: absolute; 
@@ -97,28 +95,56 @@
     }
     .page.active { display: flex; }
 
-    #tabContainer { display: flex; overflow-x: auto; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; -webkit-overflow-scrolling: touch; }
+    /* --- 追加・変更：検索とタブの固定エリア --- */
+    .sticky-controls {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(18, 18, 18, 0.95); /* スクロールした曲を綺麗に隠す */
+      backdrop-filter: blur(8px);
+      margin: 0 -10px; /* .pageのpaddingを打ち消して画面幅いっぱいに */
+      padding: 0 10px 10px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #tabContainer { 
+      display: flex; 
+      overflow-x: auto; 
+      gap: 8px; 
+      margin: 0 -10px; /* 画面端までスクロール可能に */
+      padding: 12px 10px; /* 内側に余白を取り直して最初のタブの位置を合わせる */
+      flex-shrink: 0; 
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox用スクロールバー非表示 */
+    }
+    /* Chrome/Safari用スクロールバー非表示（タブ周りをスッキリさせるため） */
+    #tabContainer::-webkit-scrollbar { display: none; }
+
     .artist-tab { padding: 8px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #888; flex-shrink: 0; }
     .artist-tab.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
     
-    /* 前回の修正を復元：入力欄などがPCのデフォルトデザインで白くなるのを防ぐ */
     input, select, textarea {
       background: var(--card) !important;
       color: white !important;
       border: 1px solid var(--border) !important;
     }
 
-    #searchBox { flex: 1; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; margin: 0; }
-    #sortSelect { width: 105px; height: 46px; border-radius: 10px; font-size: 11px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center; }
+    .search-row {
+      display: flex; gap: 8px; height: 46px;
+    }
 
-    #songList { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+    #searchBox { flex: 1; height: 100%; padding: 0 12px; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; margin: 0; }
+    #sortSelect { width: 105px; height: 100%; border-radius: 10px; font-size: 11px; outline: none; cursor: pointer; padding: 0 5px; box-sizing: border-box; text-align: center; }
+
+    #songList { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 10px; padding-bottom: 20px; }
+    /* ------------------------------------------ */
+
     .songBtn { background: rgba(30, 30, 30, 0.7); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; backdrop-filter: blur(5px); }
     .btn-main { display: flex; flex-direction: column; flex: 1; text-align: left; overflow: hidden; }
     .btn-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .btn-artist { font-size: 11px; color: #888; }
     .btn-date { font-size: 12px; color: var(--accent); font-family: monospace; margin-left: 10px; white-space: nowrap; }
     
-    /* リスナー用メッセージボタンのスタイル */
     .msg-btn { 
       background: transparent; 
       color: var(--accent); 
@@ -131,7 +157,6 @@
       white-space: nowrap; 
     }
 
-    /* メッセージ入力用モーダルの調整 */
     #msgModal textarea {
       width: 100%; 
       height: 150px; 
@@ -158,14 +183,12 @@
     .confirm-card { background: var(--card); padding: 25px; border-radius: 20px; width: 85%; text-align: center; border: 1px solid var(--accent); max-width: 400px; }
     #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:9999; color:white; font-weight:bold; }
     
-    /* モーダル専用リストの高さ制限 */
     #modalSongList, #messageList {
       max-height: 200px;
       overflow-y: auto;
       padding-right: 5px;
     }
 
-    /* カスタムスクロールバー設定（不要なコメントを削除済み） */
     #modalSongList::-webkit-scrollbar, #messageList::-webkit-scrollbar, .page::-webkit-scrollbar {
       width: 4px;
     }
@@ -210,17 +233,20 @@
 
   <div class="content-area">
     <div id="page-music" class="page active">
-      <div id="tabContainer">読み込み中...</div>
       
-      <div style="display: flex; gap: 8px; margin: 10px 0; flex-shrink: 0; height: 46px;">
-        <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()">
-        <select id="sortSelect" onchange="filterSongs()">
-          <option value="artist">アーティスト順</option>
-          <option value="name">曲名順</option>
-          <option value="date">直近歌った順</option>
-        </select>
+      <!-- 固定エリア化 -->
+      <div class="sticky-controls">
+        <div id="tabContainer">読み込み中...</div>
+        <div class="search-row">
+          <input type="text" id="searchBox" placeholder="🔍 曲名・アーティストで検索..." oninput="filterSongs()">
+          <select id="sortSelect" onchange="filterSongs()">
+            <option value="artist">アーティスト順</option>
+            <option value="name">曲名順</option>
+            <option value="date">直近歌った順</option>
+          </select>
+        </div>
       </div>
-
+      
       <div id="songList"></div>
     </div>
 
@@ -405,7 +431,6 @@
       if (currentTab === "大森元貴曲") f = f.filter(s => OHMORI_GROUP.includes(s.artist || ""));
       else if (currentTab !== "すべて") f = f.filter(s => (s.artist || "") === currentTab);
       
-      // JSエラー防止：nullの時にクラッシュしないように || "" を追加
       if (query) f = f.filter(s => (s.name || "").toLowerCase().includes(query) || (s.artist || "").toLowerCase().includes(query));
       
       f.sort((a, b) => {
@@ -578,7 +603,6 @@
         else {
           div.style.cursor = 'pointer';
           div.onclick = () => {
-            // JSエラー防止：名前が空白のデータが入ってきた時のクラッシュを防ぐ
             const fullSongData = allSongs.find(s => (s.name || "").trim() === (req.name || "").trim());
             showAdminMenu(fullSongData || { name: req.name, artist: req.artist }, true, req.id);
           };
