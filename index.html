@@ -513,6 +513,7 @@
 
     function executeSing(song) {
       const timeStr = document.getElementById('timerDisplay').innerText;
+      // ログに「1:05:00 曲名」といった形式で追記されます
       document.getElementById('resultArea').value += `${timeStr} ${song.name}\n`;
       if (song.id) callGAS({ action: "updateDate", id: song.id });
     }
@@ -618,13 +619,25 @@ function closeMsgModal() { document.getElementById('msgModal').style.display = '
     }
 
     setInterval(() => { if (IS_ADMIN) syncWithServer(); }, 3000);
+    // --- タイマー表示の修正版 ---
     setInterval(() => {
       if (isRunning && startTime) {
         const diff = Math.max(0, Date.now() - startTime);
-        const min = Math.floor(diff / 60000);
+        
+        const hours = Math.floor(diff / 3600000); // 1時間 = 3,600,000ミリ秒
+        const min = Math.floor((diff % 3600000) / 60000);
         const sec = Math.floor((diff % 60000) / 1000);
+        
         const display = document.getElementById('timerDisplay');
-        if (display) display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
+        if (display) {
+          if (hours > 0) {
+            // 1時間以上の場合は H:MM:SS
+            display.innerText = `${hours}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+          } else {
+            // 1時間未満の場合は MM:SS
+            display.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
+          }
+        }
       }
     }, 1000);
 
